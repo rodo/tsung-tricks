@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
+<!--
+
+Author :  Rodolphe Quiedeville
+Context : Tile server used in OpenStreetMap
+
+Do a single tile request randmoly choosen
+
+-->
+<tsung loglevel="notice" dumptraffic="false" version="1.0">
+
+  <!-- Client side setup -->
+  <clients>
+    <client host="localhost" weight="2" maxusers="100" />
+  </clients>
+  
+  <!-- Server side setup -->
+  <servers>
+    <server host="localhost" port="80" type="tcp"/>
+  </servers>
+
+  <load>
+    <arrivalphase phase="1" duration="30" unit="second">
+      <users interarrival="1" unit="second"></users>
+    </arrivalphase>
+  </load>
+
+  <options> 
+    <option type="ts_http" name="user_agent">
+      <user_agent probability="100">tsung 1.4.2</user_agent>
+    </option>
+  </options> 
+
+ <sessions>
+
+   <session name='random-tiles' probability='100'  type='ts_http'>
+     <request subst="true">   
+       <http url='/%%wmsosm:urlzxy%%.png' version='1.1' method='GET'></http>
+     </request>
+   </session>
+
+ </sessions>
+</tsung>

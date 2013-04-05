@@ -15,18 +15,54 @@
 %%%     You should have received a copy of the GNU General Public License
 %%%     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%
+%%%  url to include in tsung config file
+%%%
+%%%  Randomize url in tile server form used by openstreetmap project
+%%%
+%%%   - urlzxy : return a single url
+%%%
+%%%  <request subst="true">
+%%%    <http url='/%%wmsosm:urlzxy%%.png' version='1.1' method='GET'></http>
+%%%  </request>
+%%%
+%%%
+%%%
 -module(wmsosm).
--export([urlzxy/1]).
+-export([urlzxy/1,get_urlblock/1]).
 
-urlzxy({Pid, Dynvar})->
+
+get_urlblock({Pid, DynVars})->
+    [Z,X,Y] = zxy(),
+    fillurls(0,[],Z,X,Y).
+    
+fillurls(N,List,Z,X,Y) when N =< 2->
+    lists:merge(fillurls(N+1,List,Z,X,Y),arr_urlzxy(0,N,2,Z,X,Y));
+fillurls(_,_,_,_,_)->
+    [].
+
+arr_urlzxy(L,N,B,Z,X,Y) when L =< B->
+    A=[integer_to_list(Z),integer_to_list(X+L),integer_to_list(Y+N)],
+    lists:merge(arr_urlzxy(L+1,N,B,Z,X,Y),[string:join(A,"/")]);
+arr_urlzxy(_,_,_,_,_,_)->
+    [].
+
+urlzxy({Pid, DynVars})->
     {N1,N2,N3} = now(),
     random:seed(N1,N2,N3),
     %% Zoom level    
     Arr = fillall(),
     Key = random:uniform(171)-1,
     Zoomlevel = array:get(Key, array:from_list(Arr)),
-    %% url to include in tsung request like /%%wmsosm:urlzxy%%.png
     string:concat(zoomlevel(Zoomlevel), coord(Zoomlevel)).
+
+zxy()->
+    {N1,N2,N3} = now(),
+    random:seed(N1,N2,N3),
+    %% Zoom level    
+    Arr = fillall(),
+    Key = random:uniform(171)-1,
+    Zoomlevel = array:get(Key, array:from_list(Arr)),
+    [Zoomlevel,randxy(Zoomlevel),randxy(Zoomlevel)].
 
 zoomlevel(N)->
     string:concat(integer_to_list(N), "/").
@@ -35,16 +71,17 @@ coord(N)->
     string:concat(coordx(N), coordy(N)).
 
 coordx(N)->
-    {N1,N2,N3} = now(),
-    random:seed(N1,N2,N3),
-    X = random:uniform(trunc(math:pow(2, N)))-1,
+    X = randxy(N),
     string:concat(integer_to_list(X), "/").
 
 coordy(N)->
+    Y = randxy(N),
+    integer_to_list(Y).
+
+randxy(N)->
     {N1,N2,N3} = now(),
     random:seed(N1,N2,N3),
-    Y = random:uniform(trunc(math:pow(2, N)))-1,
-    integer_to_list(Y).
+    random:uniform(trunc(math:pow(2, N)))-1.
 
 fillall()->
     fillall(1, []).
