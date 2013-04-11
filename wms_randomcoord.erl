@@ -34,6 +34,8 @@ rcoord(Bottom,Top,Left,Right)->
     {Lat,Lon}.
 
 rcoord(Min,Max)->
+    {N1,N2,N3}=now(),
+    random:seed(N1,N2,N3),
     Val=random:uniform()+Min+random:uniform(round(Max-Min)),
     max(Min,min(Val,Max)).
 
