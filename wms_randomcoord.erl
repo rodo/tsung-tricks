@@ -20,9 +20,8 @@
 -module(wms_randomcoord).
 -export([url/1,rcoord/4,rcoord/2,rcoord/0]).
 
-
 url({_Pid,_DynVars})->
-    {Lon,Lat}=rcoord(),
+    {Lat,Lon}=rcoord(),
     "lat=" ++ lists:flatten(io_lib:format("~.6f",[Lat])) ++ "&lon=" ++ lists:flatten(io_lib:format("~.6f",[Lon])).
 
 rcoord()->
