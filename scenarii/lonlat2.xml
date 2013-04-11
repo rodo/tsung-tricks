@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
+<!--
+
+Author :  Rodolphe Quiedeville
+
+Perform a bench on GIS server, make requests on  random coordinates
+
+-->
+<tsung loglevel="notice" dumptraffic="false" version="1.0">
+
+  <!-- Client side setup -->
+  <clients>
+    <client host="localhost" weight="2" maxusers="40" />
+  </clients>
+
+  <!-- Server side setup -->
+  <servers>
+    <server host="localhost" port="8080" type="tcp"/>
+  </servers>
+
+  <load>
+    <arrivalphase phase="1" duration="20" unit="second">
+      <users interarrival="1" unit="second"></users>
+    </arrivalphase>
+  </load>
+
+  <options>
+    <option type="ts_http" name="user_agent">
+      <user_agent probability="100">tsung 1.4.2</user_agent>
+    </option>
+  </options>
+
+ <sessions>
+
+   <session name='zoom12' probability='10'  type='ts_http'>
+
+     <setdynvars sourcetype="erlang" callback="wms_randomcoord:url">
+       <var name="lonlat" />
+     </setdynvars>
+
+     <!-- the request will be in form /?lat=23.36&lon=36.33&zoom=12 -->
+
+     <request subst="true">
+       <http url="/?%%_lonlat%%&amp;zoom=12" method="GET" version="1.1"/>
+     </request>
+
+   </session>
+
+   <session name='zoomrandom' probability='90'  type='ts_http'>
+     <setdynvars sourcetype="erlang" callback="wms_randomcoord:url">
+       <var name="lonlat" />
+     </setdynvars>
+
+     <setdynvars sourcetype="random_number" start="1" end="18">
+       <var name="zoom" />
+     </setdynvars>
+
+     <request subst="true">
+       <http url="/?%%_lonlat%%&amp;zoom=%%_zoom%%" method="GET" version="1.1"/>
+     </request>
+
+   </session>
+
+
+ </sessions>
+</tsung>
