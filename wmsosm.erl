@@ -37,7 +37,7 @@ urlzxy({_Pid, _DynVars})->
     random:seed(N1,N2,N3),
     %% Zoom level    
     Arr = fillall(),
-    Key = random:uniform(171)-1,
+    Key = random:uniform(elmts(?MAX_ZOOM_LEVEL))-1,
     Zoomlevel = array:get(Key, array:from_list(Arr)),
     string:concat(zoomlevel(Zoomlevel), coord(Zoomlevel)).
 
@@ -96,3 +96,8 @@ fillall(N, List) when N =< ?MAX_ZOOM_LEVEL->
     lists:merge(fillall(N + 1, List),lists:seq(N, ?MAX_ZOOM_LEVEL));
 fillall(_, _)->
     [].
+
+elmts(N) when N >=1->
+    elmts(N-1)+N;
+elmts(_)->   
+    0.
