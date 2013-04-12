@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
+<!--
+
+Author :  Rodolphe Quiedeville
+
+Perform a bench on GIS server, make requests on  random coordinates
+
+-->
+<tsung loglevel="notice" dumptraffic="false" version="1.0">
+
+  <!-- Client side setup -->
+  <clients>
+    <client host="localhost" weight="2" maxusers="40" />
+  </clients>
+
+  <!-- Server side setup -->
+  <servers>
+    <server host="localhost" port="8080" type="tcp"/>
+  </servers>
+
+  <load>
+    <arrivalphase phase="1" duration="20" unit="second">
+      <users interarrival="1" unit="second"></users>
+    </arrivalphase>
+  </load>
+
+  <options>
+    <option type="ts_http" name="user_agent">
+      <user_agent probability="100">tsung 1.4.2</user_agent>
+    </option>
+  </options>
+
+ <sessions>
+<session name='one' probability='100'  type='ts_http'>
+  
+  <setdynvars sourcetype="eval" code="fun({Pid,DynVars})-> foobar end.">
+    <var name="value" />
+  </setdynvars>
+  
+
+
+  <request subst="true">
+    <match do="loop" sleep_loop="5" max_loop="10" when="match">Retry</match>
+    <http url="/?param=%%_value%%" method="GET" version="1.1"/>
+  </request>
+  
+</session>
+
+
+ </sessions>
+</tsung>

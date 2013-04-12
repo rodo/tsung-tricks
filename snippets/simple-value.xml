@@ -11,9 +11,16 @@ Simple value
   <setdynvars sourcetype="eval" code="fun({Pid,DynVars})-> foobar end.">
     <var name="value" />
   </setdynvars>
+
+  <setdynvars sourcetype="eval" code='fun({_Pid, DynVars}) ->
+				      {ok, Val} = ts_dynvars:lookup(tsung_userid, DynVars),
+				      "something" ++ integer_to_list(Val)
+				      end.'>
+    <var name="username" />
+  </setdynvars>
   
   <request subst="true">
-    <http url="/?param=%%_value%%" method="GET" version="1.1"/>
+    <http url="/?param=%%_value%%&amp;%%_username%%" method="GET" version="1.1"/>
   </request>
   
 </session>
