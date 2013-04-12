@@ -8,7 +8,7 @@ Context : Tile server used in OpenStreetMap
 Do a single tile request randmoly choosen
 
 -->
-<tsung loglevel="notice" dumptraffic="false" version="1.0">
+<tsung loglevel="notice" dumptraffic="false" version="1.0" backend="fullstats">
 
   <!-- Client side setup -->
   <clients>
@@ -17,12 +17,12 @@ Do a single tile request randmoly choosen
   
   <!-- Server side setup -->
   <servers>
-    <server host="localhost" port="80" type="tcp"/>
+    <server host="localhost" port="8080" type="tcp"/>
   </servers>
 
   <load>
     <arrivalphase phase="1" duration="30" unit="second">
-      <users interarrival="1" unit="second"></users>
+      <users interarrival="0.5" unit="second"></users>
     </arrivalphase>
   </load>
 
@@ -34,9 +34,15 @@ Do a single tile request randmoly choosen
 
  <sessions>
 
-   <session name='random-tiles' probability='100'  type='ts_http'>
+   <session name='random-tiles' probability='100' type='ts_http'>
+
+     <setdynvars sourcetype="erlang" callback="wmsosm:urlzxy">
+       <var name="url" />
+     </setdynvars>
+
+
      <request subst="true">   
-       <http url='/%%wmsosm:urlzxy%%.png' version='1.1' method='GET'></http>
+       <http url='/%%_url%%.png' version='1.1' method='GET'></http>
      </request>
    </session>
 

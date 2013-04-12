@@ -30,8 +30,18 @@
 -module(wmsosm).
 -export([urlzxy/1,get_urlblock/1]).
 
+-define(MAX_ZOOM_LEVEL, 18).
 
-get_urlblock({Pid, DynVars})->
+urlzxy({_Pid, _DynVars})->
+    {N1,N2,N3} = now(),
+    random:seed(N1,N2,N3),
+    %% Zoom level    
+    Arr = fillall(),
+    Key = random:uniform(171)-1,
+    Zoomlevel = array:get(Key, array:from_list(Arr)),
+    string:concat(zoomlevel(Zoomlevel), coord(Zoomlevel)).
+
+get_urlblock({_Pid, _DynVars})->
     [Z,X,Y] = zxy(),
     fillurls(0,[],Z,X,Y).
     
@@ -45,15 +55,6 @@ arr_urlzxy(L,N,B,Z,X,Y) when L =< B->
     lists:merge(arr_urlzxy(L+1,N,B,Z,X,Y),[string:join(A,"/")]);
 arr_urlzxy(_,_,_,_,_,_)->
     [].
-
-urlzxy({Pid, DynVars})->
-    {N1,N2,N3} = now(),
-    random:seed(N1,N2,N3),
-    %% Zoom level    
-    Arr = fillall(),
-    Key = random:uniform(171)-1,
-    Zoomlevel = array:get(Key, array:from_list(Arr)),
-    string:concat(zoomlevel(Zoomlevel), coord(Zoomlevel)).
 
 zxy()->
     {N1,N2,N3} = now(),
@@ -83,10 +84,15 @@ randxy(N)->
     random:seed(N1,N2,N3),
     random:uniform(trunc(math:pow(2, N)))-1.
 
+%%----------------------------------------------------------------------
+%% Function: fillall/0
+%% Purpose: return an array filled with N element at index N
+%% Returns: []
+%%----------------------------------------------------------------------
+
 fillall()->
     fillall(1, []).
-
-fillall(N, List) when N =< 18->
-    lists:merge(fillall(N + 1, List),lists:seq(N, 18));
+fillall(N, List) when N =< ?MAX_ZOOM_LEVEL->
+    lists:merge(fillall(N + 1, List),lists:seq(N, ?MAX_ZOOM_LEVEL));
 fillall(_, _)->
     [].
