@@ -28,7 +28,10 @@
 %%%
 %%%
 -module(wmsosm).
+-include_lib("eunit/include/eunit.hrl").
 -export([urlzxy/1,get_urlblock/1]).
+-author({author, "Rodolphe Quiédeville", "<rodolphe@quiedeville.org>"}).
+
 
 -define(MAX_ZOOM_LEVEL, 18).
 
@@ -101,3 +104,12 @@ elmts(N) when N >=1->
     elmts(N-1)+N;
 elmts(_)->   
     0.
+
+zoomlevel_test()->
+    ?assertEqual("3/",zoomlevel(3)).
+
+elmts_test() ->    
+    ?assertEqual(171, elmts(18)).
+
+fillall_test()->
+    ?assertEqual([16,17,17,18,18,18],fillall(16,[])).
