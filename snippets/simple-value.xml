@@ -1,0 +1,20 @@
+<!--
+
+Author :  Rodolphe Quiedeville
+
+Simple value
+
+-->
+   
+<session name='one' probability='100'  type='ts_http'>
+  
+  <setdynvars sourcetype="eval" code="fun({Pid,DynVars})-> foobar end.">
+    <var name="value" />
+  </setdynvars>
+  
+  <request subst="true">
+    <http url="/?param=%%_value%%" method="GET" version="1.1"/>
+  </request>
+  
+</session>
+
