@@ -1,13 +1,21 @@
-%%%
-%%% OpenStreetMap slippy map tile numbers
-%%%
-%%%
-%%% http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+%
+% @doc OpenStreetMap slippy map tile numbers
+%
+% @author Rodolphe Quiedeville <rodolphe@quiedeville.org>
+%   [http://rodolphe.quiedeville.org]
+%
+% @copyright 2013 Rodolphe Quiedeville
+%
+% @reference <a href="http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames">http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames</a>
 
 -module(slippymap).
 -export([deg2num/3]).
 -export([num2deg/3]).
 
+% @doc convert geometric coordinate to tile numbers
+%
+% @spec deg2num(Lat::float(), Lon:: float(), Zoom::integer()) -> {integer(), integer()}
+%
 deg2num(Lat,Lon,Zoom)->
     X=math:pow(2, Zoom) * ((Lon + 180) / 360),
     Sec=1/math:cos(deg2rad(Lat)),
@@ -15,6 +23,10 @@ deg2num(Lat,Lon,Zoom)->
     Y=math:pow(2, Zoom) * (1 - R) / 2,
     {round(X),round(Y)}.
 
+% @doc convert tile numbers to geometric coordinate
+%
+% @spec num2deg(X::integer(), Y::integer(), Zoom::integer()) -> {float(), float()}
+%
 num2deg(X,Y,Zoom)->
     N=math:pow(2, Zoom),
     Lon=X/N*360-180,
