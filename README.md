@@ -14,6 +14,11 @@ Modules
 
   * url/0 : generate random url with coordinates, return a string in form lat=X.XX&lon=Y.YY
 
+Tools
+=====
+
+* tsung.el : some functions to use with emacs
+
 See also
 ========
 
