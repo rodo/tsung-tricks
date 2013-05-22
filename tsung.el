@@ -11,8 +11,7 @@
    (expand-file-name
     tsung-logfilename 
     (last		       
-     (sort 
-      (directory-files tsung-log-dir 
-		       'FULL 
-		       (rx bol (repeat 8 digit) "-" (repeat 4 digit) eol)) 'string-lessp)
+     (directory-files tsung-log-dir 
+		      'FULL 
+		      (rx bol (repeat 8 digit) "-" (repeat 4 digit) eol))
      ))))
