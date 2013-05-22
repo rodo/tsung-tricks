@@ -8,9 +8,9 @@
   "Open the last created tsung.log file"
   (interactive)
   (view-file
-   (expand-file-name
+   (expand-file-name 
     tsung-logfilename 
-    (last		       
+    (car		       
      (directory-files tsung-log-dir 
 		      'FULL 
 		      (rx bol (repeat 8 digit) "-" (repeat 4 digit) eol))
