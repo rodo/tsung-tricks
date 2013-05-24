@@ -16,7 +16,7 @@ get_date({_Pid,_Dynvars})->
     fdate(rdate()).
 
 fdate({Year,Month,Day})->
-    list_to_binary(io_lib:format("~w/~w/~w", [Month,Day,Year])).
+    list_to_binary(io_lib:format("~w%2F~w%2F~w", [Month,Day,Year])).
 
 rdate()->
     calendar:gregorian_days_to_date(calendar:date_to_gregorian_days(date())+delta()).
