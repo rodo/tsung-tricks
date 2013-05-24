@@ -10,8 +10,9 @@
   (view-file
    (expand-file-name 
     tsung-logfilename 
-    (car		       
-     (directory-files tsung-log-dir 
-		      'FULL 
-		      (rx bol (repeat 8 digit) "-" (repeat 4 digit) eol))
-     ))))
+    (car
+     (reverse
+      (directory-files tsung-log-dir 
+		       'FULL 
+		       (rx bol (repeat 8 digit) "-" (repeat 4 digit) eol))
+     )))))
