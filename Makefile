@@ -1,7 +1,7 @@
 ERL=/usr/bin/erl
 ERLC=/usr/bin/erlc
 
-all: ebin/geoserver.beam ebin/percentile.beam
+all: ebin/geoserver.beam ebin/percentile.beam ebin/wmsosm.beam
 
 test: ebin/geoserver.beam ebin/percentile.beam
 	$(ERL) -noshell -pa ./ebin -s eunit test geoserver -s init stop
@@ -15,4 +15,7 @@ ebin/geoserver.beam: geoserver.erl
 	erlc -o ebin/ $?
 
 ebin/percentile.beam: percentile.erl
+	erlc -o ebin/ $?
+
+ebin/wmsosm.beam: wmsosm.erl
 	erlc -o ebin/ $?
