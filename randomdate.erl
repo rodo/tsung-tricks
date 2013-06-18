@@ -8,6 +8,7 @@
 %%
 
 -module(randomdate).
+-include_lib("eunit/include/eunit.hrl").
 -export([get_date/1]).
 
 -define(LIMIT, 10).
@@ -25,3 +26,7 @@ delta()->
     {N1,N2,N3} = now(),
     random:seed(N1,N2,N3),
     ?LIMIT-random:uniform(?LIMIT*2).
+
+%% Tests
+delta_test() ->
+    ?assert(delta() < ?LIMIT).
