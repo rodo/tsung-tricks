@@ -19,7 +19,6 @@
 %%%
 %%%
 -module(geoserver).
--include_lib("eunit/include/eunit.hrl").
 -export([urlwms/1,defaults/0]).
 -author({author, "Rodolphe Quiédeville", "<rodolphe@quiedeville.org>"}).
 
@@ -87,28 +86,3 @@ options(Option)->
 	{ok,Value} -> Option ++ "=" ++ http_uri:encode(Value);
 	false -> "Error"
     end.
-
-
-%% Units tests
-%% options/1
-options_test() ->    
-    ?assertEqual("WIDTH=256", options("WIDTH")).
-
-options2_test() ->    
-    ?assertEqual("HEIGHT=256", options("HEIGHT")).
-
-options4_test() ->    
-    ?assert(is_list(options("HEIGHT")) =:= true).
-
-%% options/2
-options3_test() ->    
-    ?assertEqual("HEIGHT=44", options("HEIGHT", ts_dynvars:new([height,width], [<<"44">>,<<"42">>]))).
-
-%% buildurl/2
-buildurl_test() ->    
-    ?assertEqual("HEIGHT=44&WIDTH=42&", buildurl(ts_dynvars:new([height,width], [<<"44">>,<<"42">>]),["HEIGHT","WIDTH"])).
-
-%% urlwms/1
-urlwms_test()->
-    Assert="FORMAT=image%2Fpng&STYLES=&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&TILED=true&WIDTH=256&HEIGHT=256&TRANSPARENT=true&SRS=EPSG%3A900913",
-    ?assertEqual(Assert,urlwms({2,ts_dynvars:new([foo], [<<"42">>])})).

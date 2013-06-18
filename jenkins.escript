@@ -1,5 +1,6 @@
 #!/usr/bin/escript
 %% -*- erlang -*-
-%%! -pa ebin/
+%%! -pa ebin-test/
 main(_Args) ->
-  eunit:test([geoserver,wmsosm,randomdate,slippymap], [{report,{eunit_surefire,[{dir,"."}]}}]).
+    eunit:test([geoserver,wmsosm,randomdate,slippymap], [{report,{eunit_surefire,[{dir,"."}]}}]).
+
