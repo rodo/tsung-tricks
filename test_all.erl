@@ -11,6 +11,7 @@ test() -> ok.
 
 all_test_() -> [geoserver_tests,
 		jsonurls_tests,
+		htmlconv_tests,
 		percentile_tests,
 		randomdate_tests,
 		slippymap_tests,
