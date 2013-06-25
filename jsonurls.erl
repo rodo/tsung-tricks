@@ -1,16 +1,18 @@
-%% Return a List or url
+%%
+%% Read json data, extract urls from it and return a List
 %%
 %% DynVars used :
 %%  - jsonurls
 %%
 %% [ {"url": "/foobar/index?page=0"},
 %%   {"url": "/foobar/index?page=1"} ]
+%% will return an erlang List as :
+%% ["/foobar/index?page=0","/foobar/index?page=1"]
 %%
 -module(jsonurls).
 -include_lib("eunit/include/eunit.hrl").
 -export([get_urls/1]).
 -author({author, "Rodolphe Quiedeville", "<rodolphe@quiedeville.org>"}).
-
 
 get_urls({_Pid, DynVars})->
     fillurls(decode(DynVars)).
