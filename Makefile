@@ -32,5 +32,5 @@ ebin-test/%.beam: %.erl
 ebin-debug/%.beam: %.erl
 	erlc -pa ./ebin-debug -o ebin-debug/ -W0 +debug_info $<
 
-ebin-debug/%.dial: %.erl ebin-debug/%.beam
+ebin-debug/%.dial: ebin-debug/%.beam
 	dialyzer -pa ./ebin-debug -o $@ $<
