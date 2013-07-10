@@ -1,6 +1,0 @@
-
-Unknown functions:
-  eunit:test/1
-  mochijson2:decode/1
-  proplists:get_value/2
-  ts_dynvars:lookup/2

@@ -1,7 +1,0 @@
-
-Unknown functions:
-  array:from_list/1
-  array:get/2
-  random:seed/3
-  random:uniform/1
-  string:join/2

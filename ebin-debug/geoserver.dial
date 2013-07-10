@@ -1,7 +1,0 @@
-
-Unknown functions:
-  http_uri:encode/1
-  string:strip/3
-  string:to_lower/1
-  ts_dynvars:lookup/2
-  ts_dynvars:new/2
