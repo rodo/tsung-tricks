@@ -19,7 +19,8 @@ dotest: test
 clean:
 	rm -fr ebin/*.beam
 	rm -fr ebin-test/*.beam
-	rm -fr ebin-test/*.dial
+	rm -fr ebin-debug/*.dial
+	rm -fr ebin-debug/*.beam
 
 
 ebin/%.beam: %.erl
