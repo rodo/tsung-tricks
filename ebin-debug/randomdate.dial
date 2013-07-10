@@ -1,0 +1,6 @@
+
+Unknown functions:
+  calendar:date_to_gregorian_days/1
+  calendar:gregorian_days_to_date/1
+  random:seed/3
+  random:uniform/1

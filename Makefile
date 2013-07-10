@@ -9,6 +9,8 @@ ERLC=/usr/bin/erlc
 
 all: ebin/htmlconv.beam ebin/jsonurls.beam ebin/geoserver.beam ebin/percentile.beam ebin/randomdate.beam ebin/slippymap.beam ebin/wmsosm.beam
 
+debug: ebin-debug/htmlconv.dial ebin-debug/jsonurls.dial ebin-debug/geoserver.dial ebin-debug/percentile.dial ebin-debug/randomdate.dial ebin-debug/slippymap.dial ebin-debug/wmsosm.dial
+
 test: ebin-test/test_all.beam ebin-test/jsonurls.beam ebin-test/jsonurls_tests.beam ebin-test/htmlconv.beam ebin-test/htmlconv_tests.beam ebin-test/geoserver.beam ebin-test/percentile.beam ebin-test/wmsosm.beam ebin-test/slippymap.beam ebin-test/randomdate.beam ebin-test/geoserver_tests.beam ebin-test/percentile_tests.beam ebin-test/wmsosm_tests.beam ebin-test/slippymap_tests.beam ebin-test/randomdate_tests.beam
 
 dotest: test
@@ -17,6 +19,7 @@ dotest: test
 clean:
 	rm -fr ebin/*.beam
 	rm -fr ebin-test/*.beam
+	rm -fr ebin-test/*.dial
 
 
 ebin/%.beam: %.erl
@@ -24,3 +27,9 @@ ebin/%.beam: %.erl
 
 ebin-test/%.beam: %.erl
 	erlc -pa ./ebin-test -o ebin-test/ -W0 +export_all $<
+
+ebin-debug/%.beam: %.erl
+	erlc -pa ./ebin-debug -o ebin-debug/ -W0 +debug_info $<
+
+ebin-debug/%.dial: %.erl ebin-debug/%.beam
+	dialyzer -pa ./ebin-debug -o $@ $<
