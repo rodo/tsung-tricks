@@ -34,7 +34,7 @@
 
 -define(MAX_ZOOM_LEVEL, 18).
 
-urlzxy({_Pid, DynVars})->
+urlzxy({_Pid, _DynVars})->
     {N1,N2,N3} = now(),
     random:seed(N1,N2,N3),
     %% Zoom level    
