@@ -40,3 +40,5 @@ Unit tests are done in CI process with Jenkins, the Makefile target
 module_tests all with option export_all. The file jenkins.escript
 is used by Jenkins to launch all tests using the Surefire module to
 generate report in Maven style usable by Jenkins.
+
+Ref : http://jenkins.quiedeville.org/view/Tsung/job/TsungTricks/
