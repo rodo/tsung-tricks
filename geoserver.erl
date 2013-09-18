@@ -22,6 +22,8 @@
 -export([urlwms/1,defaults/0]).
 -author({author, "Rodolphe Quiédeville", "<rodolphe@quiedeville.org>"}).
 
+-export([options/2,buildurl/2]).
+
 %%%
 %%% Define here your defaults values
 %%%
@@ -56,33 +58,100 @@
 %%% HEIGHT=256
 
 -define(DEFAULTS, ts_dynvars:new(
-		    [styles, service, version, request, format, tiled, height, width, transparent, srs],
-		    [?STYLES, ?SERVICE, ?VERSION, ?REQUEST, ?FORMAT, ?TILED, ?HEIGHT, ?WIDTH, ?TRANSPARENT, ?SRS])).
+		    [styles, service, version, request,
+		     format, tiled, height, width,
+		     transparent, srs,
+		     layers, tilesorigin, bbox],
+		    [?STYLES, ?SERVICE, ?VERSION, ?REQUEST,
+		     ?FORMAT, ?TILED, ?HEIGHT, ?WIDTH,
+		     ?TRANSPARENT, ?SRS,
+		     ?LAYERS, ?TILESORIGIN, ?BBOX])).
 
 defaults()->
     ?DEFAULTS.
 
 urlwms({_Pid, DynVars})->
-    string:strip(buildurl(DynVars, ["FORMAT", "STYLES", "SERVICE", 
-		       "VERSION", "REQUEST", "TILED", 
-		       "WIDTH", "HEIGHT", "TRANSPARENT",
-		       "SRS"]), right, $&).
+    string:strip(buildurl(DynVars, [format, styles, service,
+				    version, request, tiled,
+				    width, height, transparent,
+				    srs, layers, tilesorigin, bbox]), right, $&).
 
 buildurl(DynVars, [H|T])->
     options(H, DynVars)++"&"++buildurl(DynVars,T);
 buildurl(_, []) ->
     "".
 
+%%% The option value is defined in DynVars, return the dynvars
+%%%                                else, return the default value
+%%%
+%%%
 options(Option, DynVars)->
-    case ts_dynvars:lookup(list_to_atom(string:to_lower(Option)),DynVars) of
-	{ok,Rand}->
-	    Option ++ "=" ++ http_uri:encode(binary_to_list(Rand));
+    case ts_dynvars:lookup(Option,DynVars) of
+	{ok,Value}->
+	    code(Option) ++ "=" ++ encode(Value);
 	false ->
-	    options(Option)
+	    default_option(Option)
     end.
 
-options(Option)->
-    case ts_dynvars:lookup(list_to_atom(string:to_lower(Option)),?DEFAULTS) of
-	{ok,Value} -> Option ++ "=" ++ http_uri:encode(Value);
+code(Value) when is_binary(Value) ->
+    string:to_upper(binary_to_list(Value));
+code(Value) when is_atom(Value) ->
+    string:to_upper(atom_to_list(Value));
+code(Value) ->
+    Value.
+
+encode(Value) when is_binary(Value) ->
+    http_uri:encode(binary_to_list(Value));
+encode(Value) when is_atom(Value) ->
+    http_uri:encode(atom_to_list(Value));
+encode(Value) when is_integer(Value) ->
+    http_uri:encode(integer_to_list(Value));
+encode(Value) ->
+    http_uri:encode(Value).
+
+default_option("")->
+    "";
+default_option(Option)->
+    case ts_dynvars:lookup(Option,?DEFAULTS) of
+	{ok,Value} -> string:to_upper(encode(Option)) ++ "=" ++ encode(Value);
 	false -> "Error"
+    end.
+
+%% BBOX is a binary
+bbox_split(BBOX)->
+    binary:split(BBOX,<<",">>, [global,trim]).
+
+random_move(Bbox)->
+    case random:uniform(4) of
+	1 -> move(Bbox, 1, left);
+	2 -> move(Bbox, 1, bottom);
+	3 -> move(Bbox, 1, right);
+	4 -> move(Bbox, 1, top)
+    end.
+
+%% Move action are one of 6 :
+%%
+move(BBOX, Value, left)->
+    [Left,Bottom,Right,Top]=bbox_split(BBOX),
+    [binary:encode_unsigned(binary:decode_unsigned(Left)+Value),Bottom,Right,Top];
+move(BBOX, Value, bottom)->
+    [Left,Bottom,Right,Top]=bbox_split(BBOX),
+    [Left,binary:encode_unsigned(binary:decode_unsigned(Bottom)+Value),Right,Top];
+move(BBOX, Value, right)->
+    [Left,Bottom,Right,Top]=bbox_split(BBOX),
+    [Left,Bottom,binary:encode_unsigned(binary:decode_unsigned(Right)+Value),Top];
+move(BBOX, Value, top)->
+    [Left,Bottom,Right,Top]=bbox_split(BBOX),
+    [Left,Bottom,Right,binary:encode_unsigned(binary:decode_unsigned(Top)+Value)].
+
+
+%% utilities
+binary_to_number(B) ->
+        list_to_number(binary_to_list(B)).
+
+list_to_number(L) ->
+    try list_to_float(L)
+    catch
+        error:badarg ->
+	    list_to_integer(L)
     end.
