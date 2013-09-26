@@ -40,3 +40,12 @@ elmts_test() ->
 
 fillall_test()->
     ?assertEqual([16,17,17,18,18,18],wmsosm:fillall(16,[])).
+
+get_square_size_test()->   
+    ?assertEqual(4, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"4">>]), 1, 8)).
+
+get_square_size_min_test()->   
+    ?assertEqual(4, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"0">>]), 4, 8)).
+
+get_square_size_max_test()->   
+    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"42">>]), 1, 8)).

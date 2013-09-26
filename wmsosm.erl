@@ -44,17 +44,28 @@ urlzxy({_Pid, _DynVars})->
     Zoomlevel = array:get(Key, array:from_list(Arr)),
     string:concat(zoomlevel(Zoomlevel), coord(Zoomlevel)).
 
-get_urlblock({_Pid, _DynVars})->
+%%% The square size is defined in dynvars or retrun default value
+read_ssize(DynVars)->
+    case ts_dynvars:lookup(square_size,DynVars) of
+	{ok,Size} -> binary_to_number(Size);
+	false -> ?SQUARE_SIZE
+    end.
+    
+get_square_size(DynVars, Min, Max)->
+    max(Min,min(read_ssize(DynVars), Max)).
+	    
+
+get_urlblock({_Pid, DynVars})->
     [Z,X,Y] = zxy(),
-    Sq=?SQUARE_SIZE,
+    Sq=get_square_size(DynVars, 1, 8),
     fillurls(0,[],Z,X,Y,Sq).
     
-fillurls(N,List,Z,X,Y, Sq) when N =< Sq->
+fillurls(N,List,Z,X,Y, Sq) when N < Sq->
     lists:merge(fillurls(N+1,List,Z,X,Y,Sq),arr_urlzxy(0,N,Sq,Z,X,Y));
 fillurls(_,_,_,_,_,_)->
     [].
 
-arr_urlzxy(L,N,B,Z,X,Y) when L =< B->
+arr_urlzxy(L,N,B,Z,X,Y) when L < B->
     A=[integer_to_list(Z),integer_to_list(X+L),integer_to_list(Y+N)],
     lists:merge(arr_urlzxy(L+1,N,B,Z,X,Y),[string:join(A,"/")]);
 arr_urlzxy(_,_,_,_,_,_)->
@@ -105,3 +116,14 @@ elmts(N) when N >=1->
     elmts(N-1)+N;
 elmts(_)->   
     0.
+
+%% utilities
+binary_to_number(B) ->
+        list_to_number(binary_to_list(B)).
+
+list_to_number(L) ->
+    try list_to_float(L)
+    catch
+        error:badarg ->
+	    list_to_integer(L)
+    end.
