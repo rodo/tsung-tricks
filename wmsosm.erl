@@ -53,6 +53,8 @@ read_ssize(DynVars)->
 	false -> ?SQUARE_SIZE
     end.
     
+%% Return the square side with limits
+%%
 get_square_size(DynVars)->
     Min = 1,
     Max = 8,
@@ -67,7 +69,7 @@ get_urlblock({_Pid, DynVars})->
 move_next({_, DynVars})->
     Sq=get_square_size(DynVars),
     {ok, [TopLeft|_]} = ts_dynvars:lookup(list_url, DynVars),
-    random_move(TopLeft, Sq).
+    move(TopLeft, Sq, 1, random_move()).
 
 get_urlfrom(Size, [Z,X,Y])->
     fillurls(0,[],Z,X,Y,Size).
@@ -111,12 +113,12 @@ randxy(N)->
     random:seed(N1,N2,N3),
     random:uniform(trunc(math:pow(2, N)))-1.
 
-random_move(Urls, Sq)->
+random_move()->
     case random:uniform(4) of
-	1 -> move(Urls, Sq, 1, left);
-	2 -> move(Urls, Sq, 1, bottom);
-	3 -> move(Urls, Sq, 1, right);
-	4 -> move(Urls, Sq, 1, top)
+	1 -> left;
+	2 -> bottom;
+	3 -> right;
+	4 -> top
     end.
 
 %% Move action are one of 4 :
