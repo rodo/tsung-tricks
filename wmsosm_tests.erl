@@ -63,3 +63,14 @@ read_ssize_exists_test()->
 read_ssize_notexists_test()->
     %% The size is defined
     ?assertEqual(3, wmsosm:read_ssize(ts_dynvars:new([foobar], [<<"8">>]))).
+
+get_urlblock_test()->
+    %% The size is defined
+    Urls = wmsosm:get_urlblock({42,ts_dynvars:new([square_size], [<<"4">>])}),
+    ?assertEqual(16, length(Urls)).
+
+get_urlblock_empty_test()->
+    %% The size is not defined
+    Urls = wmsosm:get_urlblock({42,ts_dynvars:new()}),
+    ?assertEqual(9, length(Urls)).
+
