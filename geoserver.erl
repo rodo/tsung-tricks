@@ -22,8 +22,6 @@
 -export([urlwms/1,defaults/0]).
 -author({author, "Rodolphe Quiédeville", "<rodolphe@quiedeville.org>"}).
 
--export([options/2,buildurl/2]).
-
 %%%
 %%% Define here your defaults values
 %%%
@@ -67,8 +65,6 @@
 		     ?TRANSPARENT, ?SRS,
 		     ?LAYERS, ?TILESORIGIN, ?BBOX])).
 
-defaults()->
-    ?DEFAULTS.
 
 urlwms({_Pid, DynVars})->
     string:strip(buildurl(DynVars, [format, styles, service,
@@ -155,3 +151,7 @@ list_to_number(L) ->
         error:badarg ->
 	    list_to_integer(L)
     end.
+
+%% debug usage for developper
+defaults()->
+    ?DEFAULTS.

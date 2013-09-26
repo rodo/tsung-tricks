@@ -33,6 +33,7 @@
 
 
 -define(MAX_ZOOM_LEVEL, 18).
+-define(SQUARE_SIZE, 3).
 
 urlzxy({_Pid, _DynVars})->
     {N1,N2,N3} = now(),
@@ -45,11 +46,12 @@ urlzxy({_Pid, _DynVars})->
 
 get_urlblock({_Pid, _DynVars})->
     [Z,X,Y] = zxy(),
-    fillurls(0,[],Z,X,Y).
+    Sq=?SQUARE_SIZE,
+    fillurls(0,[],Z,X,Y,Sq).
     
-fillurls(N,List,Z,X,Y) when N =< 2->
-    lists:merge(fillurls(N+1,List,Z,X,Y),arr_urlzxy(0,N,2,Z,X,Y));
-fillurls(_,_,_,_,_)->
+fillurls(N,List,Z,X,Y, Sq) when N =< Sq->
+    lists:merge(fillurls(N+1,List,Z,X,Y,Sq),arr_urlzxy(0,N,Sq,Z,X,Y));
+fillurls(_,_,_,_,_,_)->
     [].
 
 arr_urlzxy(L,N,B,Z,X,Y) when L =< B->

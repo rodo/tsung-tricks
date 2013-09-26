@@ -98,3 +98,6 @@ list_to_number_test()->
 
 list_to_number_int_test()->    
     ?assertEqual(5, geoserver:list_to_number("5")).
+
+list_to_number_int2_test()->    
+    ?assertEqual(-15, geoserver:list_to_number("-15")).
