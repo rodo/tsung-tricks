@@ -118,8 +118,12 @@ elmts(_)->
     0.
 
 %% utilities
+binary_to_number(B) when is_binary(B)->
+    list_to_number(binary_to_list(B));
+binary_to_number(B) when is_list(B)->
+    list_to_number(B);
 binary_to_number(B) ->
-        list_to_number(binary_to_list(B)).
+    B.
 
 list_to_number(L) ->
     try list_to_float(L)

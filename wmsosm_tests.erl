@@ -49,3 +49,17 @@ get_square_size_min_test()->
 
 get_square_size_max_test()->   
     ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"42">>]), 1, 8)).
+
+get_square_size_list_test()->   
+    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], ["8"]), 1, 8)).
+
+get_square_size_int_test()->   
+    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], [8]), 1, 18)).
+
+read_ssize_exists_test()->
+    %% The size is defined
+    ?assertEqual(8, wmsosm:read_ssize(ts_dynvars:new([square_size], [<<"8">>]))).
+
+read_ssize_notexists_test()->
+    %% The size is defined
+    ?assertEqual(3, wmsosm:read_ssize(ts_dynvars:new([foobar], [<<"8">>]))).
