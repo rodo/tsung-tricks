@@ -29,8 +29,10 @@
 %%%
 -module(wmsosm).
 -export([urlzxy/1,get_urlblock/1]).
+-export([get_urlfrom/2]).
+-export([move_next/1]).
+-export([move/4]).
 -author({author, "Rodolphe Quiédeville", "<rodolphe@quiedeville.org>"}).
-
 
 -define(MAX_ZOOM_LEVEL, 18).
 -define(SQUARE_SIZE, 3).
@@ -51,15 +53,25 @@ read_ssize(DynVars)->
 	false -> ?SQUARE_SIZE
     end.
     
-get_square_size(DynVars, Min, Max)->
+get_square_size(DynVars)->
+    Min = 1,
+    Max = 8,
     max(Min,min(read_ssize(DynVars), Max)).
 	    
 
 get_urlblock({_Pid, DynVars})->
     [Z,X,Y] = zxy(),
-    Sq=get_square_size(DynVars, 1, 8),
+    Sq=get_square_size(DynVars),
     fillurls(0,[],Z,X,Y,Sq).
-    
+
+move_next({_, DynVars})->
+    Sq=get_square_size(DynVars),
+    {ok, [TopLeft|_]} = ts_dynvars:lookup(list_url, DynVars),
+    random_move(TopLeft, Sq).
+
+get_urlfrom(Size, [Z,X,Y])->
+    fillurls(0,[],Z,X,Y,Size).
+
 fillurls(N,List,Z,X,Y, Sq) when N < Sq->
     lists:merge(fillurls(N+1,List,Z,X,Y,Sq),arr_urlzxy(0,N,Sq,Z,X,Y));
 fillurls(_,_,_,_,_,_)->
@@ -98,6 +110,36 @@ randxy(N)->
     {N1,N2,N3} = now(),
     random:seed(N1,N2,N3),
     random:uniform(trunc(math:pow(2, N)))-1.
+
+random_move(Urls, Sq)->
+    case random:uniform(4) of
+	1 -> move(Urls, Sq, 1, left);
+	2 -> move(Urls, Sq, 1, bottom);
+	3 -> move(Urls, Sq, 1, right);
+	4 -> move(Urls, Sq, 1, top)
+    end.
+
+%% Move action are one of 4 :
+%%
+move(Url, Size, Value, left)->
+    [Z, X, Y] = url_split(Url),
+    get_urlfrom(Size, [Z, X - Value, Y]);
+move(Url, Size, Value, bottom)->
+    [Z, X, Y] = url_split(Url),
+    get_urlfrom(Size, [Z, X, Y + Value]);
+move(Url, Size, Value, right)->
+    [Z, X, Y] = url_split(Url),
+    get_urlfrom(Size, [Z, X + Value, Y]);
+move(Url, Size, Value, top)->
+    [Z, X, Y] = url_split(Url),
+    get_urlfrom(Size, [Z, X, max(0, Y - Value)]).
+
+
+%% BBOX is a binary
+url_split(Url)->
+    lists:map(fun(X) -> {Int, _} = string:to_integer(X),
+			Int end,
+	      string:tokens(Url, "/")).
 
 %%----------------------------------------------------------------------
 %% Function: fillall/0

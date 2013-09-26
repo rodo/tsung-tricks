@@ -42,19 +42,19 @@ fillall_test()->
     ?assertEqual([16,17,17,18,18,18],wmsosm:fillall(16,[])).
 
 get_square_size_test()->   
-    ?assertEqual(4, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"4">>]), 1, 8)).
+    ?assertEqual(4, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"4">>]) )).
 
 get_square_size_min_test()->   
-    ?assertEqual(4, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"0">>]), 4, 8)).
+    ?assertEqual(1, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"0">>]) )).
 
 get_square_size_max_test()->   
-    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"42">>]), 1, 8)).
+    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"42">>]) )).
 
 get_square_size_list_test()->   
-    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], ["8"]), 1, 8)).
+    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], ["8"]) )).
 
 get_square_size_int_test()->   
-    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], [8]), 1, 18)).
+    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], [8]) )).
 
 read_ssize_exists_test()->
     %% The size is defined
@@ -74,3 +74,17 @@ get_urlblock_empty_test()->
     Urls = wmsosm:get_urlblock({42,ts_dynvars:new()}),
     ?assertEqual(9, length(Urls)).
 
+zxy_test()->
+    ?assertEqual(3, length(wmsosm:zxy())).
+
+url_split_test()->
+    ?assertEqual([12, 1242, 3345], wmsosm:url_split("12/1242/3345")).
+
+
+move_next_test()->
+    ?assertEqual(4, 
+		 length(wmsosm:move_next({4,ts_dynvars:new([square_size,list_url],
+								  [2,["14/9/7"]
+								  ])
+					 }))
+		).
