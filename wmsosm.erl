@@ -28,6 +28,7 @@
 %%% @doc List of dynvars used:
 %%%  - list_url
 %%%  - first_url
+%%%  - square_size
 %%%
 -module(wmsosm).
 -export([urlzxy/1,get_urlblock/1]).
@@ -42,6 +43,8 @@
 -define(ZOOM_LEVEL_MAX, 18).
 
 -define(SQUARE_SIZE, 3).
+-define(TILE_SIZE, 256).
+-define(MAP_SIZE, 768).
 
 urlzxy({_Pid, _DynVars})->
     {N1,N2,N3} = now(),
@@ -56,7 +59,7 @@ urlzxy({_Pid, _DynVars})->
 read_ssize(DynVars)->
     case ts_dynvars:lookup(square_size,DynVars) of
 	{ok,Size} -> binary_to_number(Size);
-	false -> ?SQUARE_SIZE
+	false -> round(?MAP_SIZE/?TILE_SIZE)
     end.
     
 	    
