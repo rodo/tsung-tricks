@@ -42,3 +42,9 @@ is used by Jenkins to launch all tests using the Surefire module to
 generate report in Maven style usable by Jenkins.
 
 Ref : http://jenkins.quiedeville.org/view/Tsung/job/TsungTricks/
+
+Dependencies
+============
+
+geoserver.erl uses
+[proj4erl](https://github.com/greenelephantlabs/proj4erl)
