@@ -80,18 +80,50 @@ zxy_test()->
 url_split_test()->
     ?assertEqual([12, 1242, 3345], wmsosm:url_split("12/1242/3345")).
 
-%% move_next_test()->
-%%     ?assertEqual(4, 
-%% 		 length(wmsosm:move_next({4,ts_dynvars:new([square_size,list_url],
-%% 								  [2,["14/9/7"]
-%% 								  ])
-%% 					 }))
-%% 		).
+move_next_test()->
+    ?assertEqual(4, 
+		 length(wmsosm:move_next({4,ts_dynvars:new([square_size,list_url],
+								  [2,["14/9/7"]
+								  ])
+					 }))
+		).
 
 random_action1_test()->
-    Actions = [{top, 1}, {bottom,2}, {left,3}, {right,4}],
-    ?assertNot(false =:= lists:keyfind(wmsosm:random_action(3), 1, Actions )).
+    ?assertEqual(move,  wmsosm:random_action(3)).
 
 random_action2_test()->
-    Actions = [{-1, 1}, {1,2}],
-    ?assertNot(false =:= lists:keyfind(wmsosm:random_action(50), 1, Actions )).
+    ?assertEqual(zoom,  wmsosm:random_action(53)).
+
+random_move1_test()->
+    Actions = [{top, 1}, {bottom,2}, {left,3}, {right,4}],
+    ?assertNot(false =:= lists:keyfind(wmsosm:random_move(), 1, Actions )).
+
+binary_to_number_test()->    
+    ?assertEqual(5.6, wmsosm:binary_to_number(<<"5.6">>)).
+
+list_to_number_test()->    
+    ?assertEqual(5.6, wmsosm:list_to_number("5.6")).
+
+list_to_number_int_test()->    
+    ?assertEqual(5, wmsosm:list_to_number("5")).
+
+list_to_number_int2_test()->    
+    ?assertEqual(-15, wmsosm:list_to_number("-15")).
+
+%% up to one zoom level
+zoom_move_more_test()->
+    ?assertEqual(["13/1242/3345"], wmsosm:zoom_move("12/1242/3345", 1, more)).
+
+%% stay on the same zoom level, limit max reached
+
+zoom_move_less_test()->
+    ?assertEqual(["11/1242/3345"], wmsosm:zoom_move("12/1242/3345", 1, less)).
+
+new_zoom_more_test()->
+    ?assertEqual(4, wmsosm:new_zoom(3, more)).
+
+new_zoom_less_test()->
+    ?assertEqual(4, wmsosm:new_zoom(5, less)).
+
+new_zoom_more_limit_test()->
+    ?assert(18 > wmsosm:new_zoom(18, more) ).

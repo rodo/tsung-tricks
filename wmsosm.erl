@@ -36,7 +36,9 @@
 -author({author, "Rodolphe Quiédeville", "<rodolphe@quiedeville.org>"}).
 
 
--define(MAX_ZOOM_LEVEL, 18).
+-define(ZOOM_LEVEL_MIN, 1).
+-define(ZOOM_LEVEL_MAX, 18).
+
 -define(SQUARE_SIZE, 3).
 
 urlzxy({_Pid, _DynVars})->
@@ -44,7 +46,7 @@ urlzxy({_Pid, _DynVars})->
     random:seed(N1,N2,N3),
     %% Zoom level    
     Arr = fillall(),
-    Key = random:uniform(elmts(?MAX_ZOOM_LEVEL))-1,
+    Key = random:uniform(elmts(?ZOOM_LEVEL_MAX))-1,
     Zoomlevel = array:get(Key, array:from_list(Arr)),
     string:concat(zoomlevel(Zoomlevel), coord(Zoomlevel)).
 
@@ -65,7 +67,7 @@ move_next({_, DynVars})->
     {ok, [TopLeft|_]} = ts_dynvars:lookup(list_url, DynVars),
     case random_action(random:uniform(60)) of
 	move -> move(TopLeft, Sq, 1, random_move());
-	zoom -> move(TopLeft, Sq, 1, random_move())
+	zoom -> zoom_move(TopLeft, Sq, random_zoom())
     end.
 
 
@@ -146,8 +148,8 @@ random_move()->
 %%
 random_zoom()->
     case random:uniform(2) of
-	1 -> +1;
-	2 -> -1
+	1 -> more;
+	2 -> less
     end.
 
 %% @doc Random action return move or zoom
@@ -155,9 +157,9 @@ random_zoom()->
 %% @spec random_action( integer() ) -> string()
 %%
 random_action(X) when X < 40 ->
-    random_move();
+    move;
 random_action(X) when X >= 40->
-    random_zoom().
+    zoom.
 
 
 %% Move action are one of 4 :
@@ -175,6 +177,25 @@ move(Url, Size, Value, top)->
     [Z, X, Y] = url_split(Url),
     get_urlfrom(Size, [Z, X, max(0, Y - Value)]).
 
+zoom_move(Url, Size, more)->
+    [Z, X, Y] = url_split(Url),
+    get_urlfrom(Size, [new_zoom(Z, more), X, Y]);
+zoom_move(Url, Size, less)->
+    [Z, X, Y] = url_split(Url),
+    get_urlfrom(Size, [new_zoom(Z, less), X, Y]).
+
+%% If the limit is reached return a random zoom level
+%% 
+%%
+new_zoom(Z, more) when Z == ?ZOOM_LEVEL_MAX ->
+    max(?ZOOM_LEVEL_MIN, random:uniform(?ZOOM_LEVEL_MAX) - 1);
+new_zoom(Z, more) ->
+    Z + 1;
+new_zoom(Z, less) when Z == ?ZOOM_LEVEL_MIN ->
+    max(?ZOOM_LEVEL_MIN, random:uniform(?ZOOM_LEVEL_MAX) - 1);
+new_zoom(Z, less) ->
+    Z - 1.
+    
 
 %% BBOX is a binary
 url_split(Url)->
@@ -190,8 +211,8 @@ url_split(Url)->
 
 fillall()->
     fillall(1, []).
-fillall(N, List) when N =< ?MAX_ZOOM_LEVEL->
-    lists:merge(fillall(N + 1, List),lists:seq(N, ?MAX_ZOOM_LEVEL));
+fillall(N, List) when N =< ?ZOOM_LEVEL_MAX->
+    lists:merge(fillall(N + 1, List),lists:seq(N, ?ZOOM_LEVEL_MAX));
 fillall(_, _)->
     [].
 
