@@ -112,7 +112,7 @@ list_to_number_int2_test()->
 
 %% up to one zoom level
 zoom_move_more_test()->
-    ?assertEqual(["13/1242/3345"], wmsosm:zoom_move("12/1242/3345", 1, more)).
+    ?assertEqual(["13/144/81"], wmsosm:zoom_move("12/12/9", 1, more)).
 
 %% stay on the same zoom level, limit max reached
 
@@ -144,3 +144,11 @@ move_first_test()->
 move_first_defined_test()->
     Assert = ["2/1/1","2/1/2","2/1/3","2/2/1","2/2/2","2/2/3","2/3/1", "2/3/2","2/3/3"],
     ?assertEqual(Assert, wmsosm:move_first({4, ts_dynvars:new([first_url],["2/1/1"])} )).
+%%
+%%
+%%
+coord_zoom_up_test()->
+    ?assertEqual(16, wmsosm:coord_zoom(4, 10, 11 )).
+
+coord_zoom_2up_test()->
+    ?assertEqual(64, wmsosm:coord_zoom(4, 10, 12 )).

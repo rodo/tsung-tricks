@@ -38,7 +38,6 @@
 -export([move/4]).
 -author({author, "Rodolphe Quiédeville", "<rodolphe@quiedeville.org>"}).
 
-
 -define(ZOOM_LEVEL_MIN, 1).
 -define(ZOOM_LEVEL_MAX, 18).
 
@@ -74,7 +73,11 @@ move_first({_Pid, DynVars})->
 	false -> get_urlblock({"", DynVars})
     end.
 
-
+%% Can't be the first move, the next move is related to the previous
+%% and read DynVars
+%%
+%% The next move is random from 6 possible actions
+%%
 move_next({_, DynVars})->
     Sq=get_square_size(DynVars),
     [TopLeft|_] = last_block(DynVars),
@@ -177,9 +180,9 @@ random_zoom()->
 %%
 %% @spec random_action( integer() ) -> string()
 %%
-random_action(X) when X < 40 ->
+random_action(X) when X < 50 ->
     move;
-random_action(X) when X >= 40->
+random_action(X) when X >= 50->
     zoom.
 
 
@@ -200,10 +203,19 @@ move(Url, Size, Value, top)->
 
 zoom_move(Url, Size, more)->
     [Z, X, Y] = url_split(Url),
-    get_urlfrom(Size, [new_zoom(Z, more), X, Y]);
+    NewZoom = new_zoom(Z, more),
+    get_urlfrom(Size, [NewZoom, 
+		       coord_zoom(X, Z, NewZoom), 
+		       coord_zoom(Y, Z, NewZoom)]);
 zoom_move(Url, Size, less)->
     [Z, X, Y] = url_split(Url),
     get_urlfrom(Size, [new_zoom(Z, less), X, Y]).
+
+%% @doc Calculate the related tile number between two zoom level
+%%
+%%
+coord_zoom(Coord, OldZoom, NewZoom) when NewZoom > OldZoom ->
+    round(math:pow(Coord, NewZoom - OldZoom + 1)).
 
 %% If the limit is reached return a random zoom level
 %% 
