@@ -127,3 +127,20 @@ new_zoom_less_test()->
 
 new_zoom_more_limit_test()->
     ?assert(18 > wmsosm:new_zoom(18, more) ).
+%%
+%%
+%%
+last_block_defined_test()->   
+    ?assertEqual(["8/9/10"], wmsosm:last_block(ts_dynvars:new([list_url], [["8/9/10"]]) )).
+
+last_block_undefined_test()->
+    ?assertEqual(9, length(wmsosm:last_block(ts_dynvars:new() ))).
+%%
+%%
+%%
+move_first_test()->
+    ?assertEqual(9, length(wmsosm:move_first({4, ts_dynvars:new()} ) )).
+
+move_first_defined_test()->
+    Assert = ["2/1/1","2/1/2","2/1/3","2/2/1","2/2/2","2/2/3","2/3/1", "2/3/2","2/3/3"],
+    ?assertEqual(Assert, wmsosm:move_first({4, ts_dynvars:new([first_url],["2/1/1"])} )).

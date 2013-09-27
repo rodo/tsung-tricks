@@ -25,7 +25,9 @@
 %%%    <http url='/%%wmsosm:urlzxy%%.png' version='1.1' method='GET'></http>
 %%%  </request>
 %%%
-%%%
+%%% @doc List of dynvars used:
+%%%  - list_url
+%%%  - first_url
 %%%
 -module(wmsosm).
 -export([urlzxy/1,get_urlblock/1]).
@@ -58,18 +60,34 @@ read_ssize(DynVars)->
     end.
     
 	    
-
+%% The first move
+%%
+%%
 move_first({_Pid, DynVars})->
-    get_urlblock({_Pid, DynVars}).
+    case ts_dynvars:lookup(first_url, DynVars) of
+	{ok, Url} -> 
+	    [Z, X, Y] = url_split(Url),
+	    get_urlfrom(get_square_size(DynVars), [Z, X , Y]);
+	false -> get_urlblock({"", DynVars})
+    end.
+
 
 move_next({_, DynVars})->
     Sq=get_square_size(DynVars),
-    {ok, [TopLeft|_]} = ts_dynvars:lookup(list_url, DynVars),
+    [TopLeft|_] = last_block(DynVars),
     case random_action(random:uniform(60)) of
 	move -> move(TopLeft, Sq, 1, random_move());
 	zoom -> zoom_move(TopLeft, Sq, random_zoom())
     end.
 
+%% Return the last block
+%%
+%%
+last_block(DynVars)->
+    case ts_dynvars:lookup(list_url, DynVars) of
+	{ok, Block} -> Block;
+	false -> get_urlblock({"", DynVars})
+    end.
 
 get_urlblock({_Pid, DynVars})->
     [Z,X,Y] = zxy(),
