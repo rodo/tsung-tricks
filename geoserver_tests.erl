@@ -55,33 +55,6 @@ urlwms2_test()->
     Assert="FORMAT=image%2Fpng&STYLES=&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&TILED=true&WIDTH=42&HEIGHT=256&TRANSPARENT=true&SRS=EPSG%3A900913&LAYERS=&TILESORIGIN=&BBOX=",
     ?assertEqual(Assert,geoserver:urlwms({2,ts_dynvars:new([width], [<<"42">>])})).
 
-%%
-splitbbox_format_test()->
-    ?assertEqual(true,is_list(geoserver:bbox_split(<<"0,0,1,0">>))).
-
-splitbbox_test()->
-    Assert=[<<"0">>,<<"0">>,<<"1">>,<<"0">>],
-    ?assertEqual(Assert,geoserver:bbox_split(<<"0,0,1,0">>)).
-
-%% moving on left
-move_left_test()->
-    Assert=[<<"1">>,<<"0">>,<<"1">>,<<"0">>],
-    ?assertEqual(Assert,geoserver:move(<<"0,0,1,0">>, 1, left)).
-
-%%moving on bottom
-move_bottom_test()->
-    Assert=[<<"1">>,<<"4">>,<<"1">>,<<"0">>],
-    ?assertEqual(Assert,geoserver:move(<<"1,0,1,0">>, 4, bottom)).
-
-%% moving on right
-move_right_test()->
-    Assert=[<<"1">>,<<"0">>,<<"3">>,<<"0">>],
-    ?assertEqual(Assert,geoserver:move(<<"1,0,1,0">>, 2, right)).
-
-move_bottom_top()->
-    Assert=[<<"1">>,<<"0">>,<<"1">>,<<"2">>],
-    ?assertEqual(Assert,geoserver:move(<<"1,0,1,2">>, 0, top)).
-
 %% proj4erl
 proj_test()->
     {ok, WGS84} = proj4:init("+init=epsg:4326"),
@@ -90,14 +63,3 @@ proj_test()->
     {ok, P2} = proj4:transform(WGS84, CRS2180, P),
     ?assertEqual({639951.5695094677, 486751.7840663176}, P2).
 
-binary_to_number_test()->    
-    ?assertEqual(5.6, geoserver:binary_to_number(<<"5.6">>)).
-
-list_to_number_test()->    
-    ?assertEqual(5.6, geoserver:list_to_number("5.6")).
-
-list_to_number_int_test()->    
-    ?assertEqual(5, geoserver:list_to_number("5")).
-
-list_to_number_int2_test()->    
-    ?assertEqual(-15, geoserver:list_to_number("-15")).
