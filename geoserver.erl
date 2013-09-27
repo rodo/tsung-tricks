@@ -113,44 +113,6 @@ default_option(Option)->
 	false -> "Error"
     end.
 
-%% BBOX is a binary
-bbox_split(BBOX)->
-    binary:split(BBOX,<<",">>, [global,trim]).
-
-random_move(Bbox)->
-    case random:uniform(4) of
-	1 -> move(Bbox, 1, left);
-	2 -> move(Bbox, 1, bottom);
-	3 -> move(Bbox, 1, right);
-	4 -> move(Bbox, 1, top)
-    end.
-
-%% Move action are one of 6 :
-%%
-move(BBOX, Value, left)->
-    [Left,Bottom,Right,Top]=bbox_split(BBOX),
-    [binary:encode_unsigned(binary:decode_unsigned(Left)+Value),Bottom,Right,Top];
-move(BBOX, Value, bottom)->
-    [Left,Bottom,Right,Top]=bbox_split(BBOX),
-    [Left,binary:encode_unsigned(binary:decode_unsigned(Bottom)+Value),Right,Top];
-move(BBOX, Value, right)->
-    [Left,Bottom,Right,Top]=bbox_split(BBOX),
-    [Left,Bottom,binary:encode_unsigned(binary:decode_unsigned(Right)+Value),Top];
-move(BBOX, Value, top)->
-    [Left,Bottom,Right,Top]=bbox_split(BBOX),
-    [Left,Bottom,Right,binary:encode_unsigned(binary:decode_unsigned(Top)+Value)].
-
-
-%% utilities
-binary_to_number(B) ->
-        list_to_number(binary_to_list(B)).
-
-list_to_number(L) ->
-    try list_to_float(L)
-    catch
-        error:badarg ->
-	    list_to_integer(L)
-    end.
 
 %% debug usage for developper
 defaults()->

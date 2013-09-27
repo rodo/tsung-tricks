@@ -80,11 +80,18 @@ zxy_test()->
 url_split_test()->
     ?assertEqual([12, 1242, 3345], wmsosm:url_split("12/1242/3345")).
 
+%% move_next_test()->
+%%     ?assertEqual(4, 
+%% 		 length(wmsosm:move_next({4,ts_dynvars:new([square_size,list_url],
+%% 								  [2,["14/9/7"]
+%% 								  ])
+%% 					 }))
+%% 		).
 
-move_next_test()->
-    ?assertEqual(4, 
-		 length(wmsosm:move_next({4,ts_dynvars:new([square_size,list_url],
-								  [2,["14/9/7"]
-								  ])
-					 }))
-		).
+random_action1_test()->
+    Actions = [{top, 1}, {bottom,2}, {left,3}, {right,4}],
+    ?assertNot(false =:= lists:keyfind(wmsosm:random_action(3), 1, Actions )).
+
+random_action2_test()->
+    Actions = [{-1, 1}, {1,2}],
+    ?assertNot(false =:= lists:keyfind(wmsosm:random_action(50), 1, Actions )).

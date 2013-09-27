@@ -30,9 +30,11 @@
 -module(wmsosm).
 -export([urlzxy/1,get_urlblock/1]).
 -export([get_urlfrom/2]).
+-export([move_first/1]).
 -export([move_next/1]).
 -export([move/4]).
 -author({author, "Rodolphe Quiédeville", "<rodolphe@quiedeville.org>"}).
+
 
 -define(MAX_ZOOM_LEVEL, 18).
 -define(SQUARE_SIZE, 3).
@@ -53,24 +55,41 @@ read_ssize(DynVars)->
 	false -> ?SQUARE_SIZE
     end.
     
-%% Return the square side with limits
-%%
-get_square_size(DynVars)->
-    Min = 1,
-    Max = 8,
-    max(Min,min(read_ssize(DynVars), Max)).
 	    
+
+move_first({_Pid, DynVars})->
+    get_urlblock({_Pid, DynVars}).
+
+move_next({_, DynVars})->
+    Sq=get_square_size(DynVars),
+    {ok, [TopLeft|_]} = ts_dynvars:lookup(list_url, DynVars),
+    case random_action(random:uniform(60)) of
+	move -> move(TopLeft, Sq, 1, random_move());
+	zoom -> move(TopLeft, Sq, 1, random_move())
+    end.
+
 
 get_urlblock({_Pid, DynVars})->
     [Z,X,Y] = zxy(),
     Sq=get_square_size(DynVars),
     fillurls(0,[],Z,X,Y,Sq).
 
-move_next({_, DynVars})->
-    Sq=get_square_size(DynVars),
-    {ok, [TopLeft|_]} = ts_dynvars:lookup(list_url, DynVars),
-    move(TopLeft, Sq, 1, random_move()).
 
+
+%% Return the square side with limits
+%%
+%% If the square size is not defined in the scenario the default value
+%% is returned
+%%
+get_square_size(DynVars)->
+    Min = 1,
+    Max = 8,
+    max(Min,min(read_ssize(DynVars), Max)).
+
+%% Get an array of url from the top left
+%%
+%%
+%%
 get_urlfrom(Size, [Z,X,Y])->
     fillurls(0,[],Z,X,Y,Size).
 
@@ -120,6 +139,26 @@ random_move()->
 	3 -> right;
 	4 -> top
     end.
+
+%%
+%%
+%% @spec random_zoom( integer() ) -> integer()
+%%
+random_zoom()->
+    case random:uniform(2) of
+	1 -> +1;
+	2 -> -1
+    end.
+
+%% @doc Random action return move or zoom
+%%
+%% @spec random_action( integer() ) -> string()
+%%
+random_action(X) when X < 40 ->
+    random_move();
+random_action(X) when X >= 40->
+    random_zoom().
+
 
 %% Move action are one of 4 :
 %%
