@@ -210,17 +210,16 @@ zoom_move(Url, Size, Operation)->
 %% @doc Calculate the related tile number between two zoom level
 %%
 %%
-coord_zoom(Coord, OldZoom, NewZoom)->
-    desc(OldZoom, NewZoom, Coord).
+
 
 %%
 %% @todo recalculate
 %%
-desc(OldZoom, NewZoom, X) when OldZoom > NewZoom->    
-    desc(OldZoom-1, NewZoom, round(X / 2));
-desc(OldZoom, NewZoom, X) when OldZoom < NewZoom->    
-    desc(OldZoom+1, NewZoom, 2 * X);
-desc(OldZoom, NewZoom, X) when OldZoom == NewZoom->
+coord_zoom(X, OldZoom, NewZoom) when OldZoom > NewZoom->    
+    coord_zoom(round(X / 2), OldZoom-1, NewZoom);
+coord_zoom(X, OldZoom, NewZoom) when OldZoom < NewZoom->    
+    coord_zoom( 2 * X ,OldZoom+1, NewZoom);
+coord_zoom(X, OldZoom, NewZoom) when OldZoom == NewZoom->
     X.
 
 %% If the limit is reached return a random zoom level

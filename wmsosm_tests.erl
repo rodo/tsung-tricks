@@ -156,12 +156,3 @@ coord_zoom_2up_test()->
 coord_zoom_1down_test()->
     ?assertEqual(130, wmsosm:coord_zoom(259, 9, 8 )).
 
-%% desc 3 levels
-desc3_test()->
-    ?assertEqual(8, wmsosm:desc(15, 12, 64 )).
-%% desc 2 levels
-desc2_test()->
-    ?assertEqual(324, wmsosm:desc(10, 12, 81 )).
-%% desc 1 level
-desc1_test()->
-    ?assertEqual(8, wmsosm:desc(7, 6, 16 )).
