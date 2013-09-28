@@ -35,7 +35,6 @@
 -export([get_urlfrom/2]).
 -export([move_first/1]).
 -export([move_next/1]).
--export([move/4]).
 -author({author, "Rodolphe Quiédeville", "<rodolphe@quiedeville.org>"}).
 
 -define(ZOOM_LEVEL_MIN, 1).
@@ -48,7 +47,7 @@
 urlzxy({_Pid, _DynVars})->
     {N1,N2,N3} = now(),
     random:seed(N1,N2,N3),
-    %% Zoom level    
+    %% Zoom level
     Arr = fillall(),
     Key = random:uniform(elmts(?ZOOM_LEVEL_MAX))-1,
     Zoomlevel = array:get(Key, array:from_list(Arr)),
@@ -60,14 +59,14 @@ read_ssize(DynVars)->
 	{ok,Size} -> binary_to_number(Size);
 	false -> round(?MAP_SIZE/?TILE_SIZE)
     end.
-    
-	    
+
+
 %% The first move
 %%
 %%
 move_first({_Pid, DynVars})->
     case ts_dynvars:lookup(first_url, DynVars) of
-	{ok, Url} -> 
+	{ok, Url} ->
 	    [Z, X, Y] = url_split(Url),
 	    get_urlfrom(get_square_size(DynVars), [Z, X , Y]);
 	false -> get_urlblock({"", DynVars})
@@ -133,7 +132,7 @@ arr_urlzxy(_,_,_,_,_,_)->
 zxy()->
     {N1,N2,N3} = now(),
     random:seed(N1,N2,N3),
-    %% Zoom level    
+    %% Zoom level
     Arr = fillall(),
     Key = random:uniform(171)-1,
     Zoomlevel = array:get(Key, array:from_list(Arr)),
@@ -201,24 +200,31 @@ move(Url, Size, Value, top)->
     [Z, X, Y] = url_split(Url),
     get_urlfrom(Size, [Z, X, max(0, Y - Value)]).
 
-zoom_move(Url, Size, more)->
+zoom_move(Url, Size, Operation)->
     [Z, X, Y] = url_split(Url),
-    NewZoom = new_zoom(Z, more),
-    get_urlfrom(Size, [NewZoom, 
-		       coord_zoom(X, Z, NewZoom), 
-		       coord_zoom(Y, Z, NewZoom)]);
-zoom_move(Url, Size, less)->
-    [Z, X, Y] = url_split(Url),
-    get_urlfrom(Size, [new_zoom(Z, less), X, Y]).
+    NewZoom = new_zoom(Z, Operation),
+    get_urlfrom(Size, [NewZoom,
+		       coord_zoom(X, Z, NewZoom),
+		       coord_zoom(Y, Z, NewZoom)]).
 
 %% @doc Calculate the related tile number between two zoom level
 %%
 %%
-coord_zoom(Coord, OldZoom, NewZoom) when NewZoom > OldZoom ->
-    round(math:pow(Coord, NewZoom - OldZoom + 1)).
+coord_zoom(Coord, OldZoom, NewZoom)->
+    desc(OldZoom, NewZoom, Coord).
+
+%%
+%% @todo recalculate
+%%
+desc(OldZoom, NewZoom, X) when OldZoom > NewZoom->    
+    desc(OldZoom-1, NewZoom, round(X / 2));
+desc(OldZoom, NewZoom, X) when OldZoom < NewZoom->    
+    desc(OldZoom+1, NewZoom, 2 * X);
+desc(OldZoom, NewZoom, X) when OldZoom == NewZoom->
+    X.
 
 %% If the limit is reached return a random zoom level
-%% 
+%%
 %%
 new_zoom(Z, more) when Z == ?ZOOM_LEVEL_MAX ->
     max(?ZOOM_LEVEL_MIN, random:uniform(?ZOOM_LEVEL_MAX) - 1);
@@ -228,7 +234,7 @@ new_zoom(Z, less) when Z == ?ZOOM_LEVEL_MIN ->
     max(?ZOOM_LEVEL_MIN, random:uniform(?ZOOM_LEVEL_MAX) - 1);
 new_zoom(Z, less) ->
     Z - 1.
-    
+
 
 %% BBOX is a binary
 url_split(Url)->
@@ -251,7 +257,7 @@ fillall(_, _)->
 
 elmts(N) when N >=1->
     elmts(N-1)+N;
-elmts(_)->   
+elmts(_)->
     0.
 
 %% utilities

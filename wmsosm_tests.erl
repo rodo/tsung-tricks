@@ -112,12 +112,12 @@ list_to_number_int2_test()->
 
 %% up to one zoom level
 zoom_move_more_test()->
-    ?assertEqual(["13/144/81"], wmsosm:zoom_move("12/12/9", 1, more)).
+    ?assertEqual(["13/24/18"], wmsosm:zoom_move("12/12/9", 1, more)).
 
 %% stay on the same zoom level, limit max reached
 
 zoom_move_less_test()->
-    ?assertEqual(["11/1242/3345"], wmsosm:zoom_move("12/1242/3345", 1, less)).
+    ?assertEqual(["11/13/15"], wmsosm:zoom_move("12/26/30", 1, less)).
 
 new_zoom_more_test()->
     ?assertEqual(4, wmsosm:new_zoom(3, more)).
@@ -148,7 +148,20 @@ move_first_defined_test()->
 %%
 %%
 coord_zoom_up_test()->
-    ?assertEqual(16, wmsosm:coord_zoom(4, 10, 11 )).
+    ?assertEqual(8, wmsosm:coord_zoom(4, 10, 11 )).
 
 coord_zoom_2up_test()->
-    ?assertEqual(64, wmsosm:coord_zoom(4, 10, 12 )).
+    ?assertEqual(16, wmsosm:coord_zoom(4, 10, 12 )).
+
+coord_zoom_1down_test()->
+    ?assertEqual(130, wmsosm:coord_zoom(259, 9, 8 )).
+
+%% desc 3 levels
+desc3_test()->
+    ?assertEqual(8, wmsosm:desc(15, 12, 64 )).
+%% desc 2 levels
+desc2_test()->
+    ?assertEqual(324, wmsosm:desc(10, 12, 81 )).
+%% desc 1 level
+desc1_test()->
+    ?assertEqual(8, wmsosm:desc(7, 6, 16 )).
