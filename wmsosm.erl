@@ -42,7 +42,11 @@
 
 -define(SQUARE_SIZE, 3).
 -define(TILE_SIZE, 256).
--define(MAP_SIZE, 768).
+-define(TILE_WIDTH, 256).
+-define(TILE_HEIGHT, 256).
+
+-define(MAP_WIDTH, 1024).
+-define(MAP_HEIGHT, 768).
 
 urlzxy({_Pid, _DynVars})->
     {N1,N2,N3} = now(),
@@ -54,11 +58,18 @@ urlzxy({_Pid, _DynVars})->
     string:concat(zoomlevel(Zoomlevel), coord(Zoomlevel)).
 
 %%% The square size is defined in dynvars or retrun default value
-read_ssize(DynVars)->
+read_ssize(DynVars, height)->
     case ts_dynvars:lookup(square_size,DynVars) of
 	{ok,Size} -> binary_to_number(Size);
-	false -> round(?MAP_SIZE/?TILE_SIZE)
+	false -> round(?MAP_HEIGHT/?TILE_HEIGHT)
+    end;
+read_ssize(DynVars, width)->
+    case ts_dynvars:lookup(square_size,DynVars) of
+	{ok,Size} -> binary_to_number(Size);
+	false -> round(?MAP_WIDTH/?TILE_WIDTH)
     end.
+
+
 
 
 %% The first move
@@ -85,6 +96,15 @@ move_next({_, DynVars})->
 	zoom -> zoom_move(TopLeft, Sq, random_zoom())
     end.
 
+%% @doc Random action return move or zoom
+%%
+%% @spec random_action( integer() ) -> string()
+%%
+random_action(X) when X < 50 ->
+    move;
+random_action(X) when X >= 50->
+    zoom.
+
 %% Return the last block
 %%
 %%
@@ -97,7 +117,8 @@ last_block(DynVars)->
 get_urlblock({_Pid, DynVars})->
     [Z,X,Y] = zxy(),
     Sq=get_square_size(DynVars),
-    fillurls(0,[],Z,X,Y,Sq).
+    [Width, Height] = Sq,
+    fillurls(0,[],Z,X,Y,Width,Height).
 
 
 
@@ -109,18 +130,20 @@ get_urlblock({_Pid, DynVars})->
 get_square_size(DynVars)->
     Min = 1,
     Max = 8,
-    max(Min,min(read_ssize(DynVars), Max)).
+    [max(Min,min(read_ssize(DynVars, width), Max)),
+     max(Min,min(read_ssize(DynVars, height), Max))].
 
 %% Get an array of url from the top left
 %%
 %%
 %%
 get_urlfrom(Size, [Z,X,Y])->
-    fillurls(0,[],Z,X,Y,Size).
+    [Width, Height] = Size,
+    fillurls(0,[],Z,X,Y,Width,Height).
 
-fillurls(N,List,Z,X,Y, Sq) when N < Sq->
-    lists:merge(fillurls(N+1,List,Z,X,Y,Sq),arr_urlzxy(0,N,Sq,Z,X,Y));
-fillurls(_,_,_,_,_,_)->
+fillurls(N,List,Z,X,Y,Width,Height) when N < Height->
+    lists:merge(fillurls(N+1,List,Z,X,Y,Width,Height),arr_urlzxy(0,N,Width,Z,X,Y));
+fillurls(_,_,_,_,_,_,_)->
     [].
 
 arr_urlzxy(L,N,B,Z,X,Y) when L < B->
@@ -175,14 +198,6 @@ random_zoom()->
 	2 -> less
     end.
 
-%% @doc Random action return move or zoom
-%%
-%% @spec random_action( integer() ) -> string()
-%%
-random_action(X) when X < 50 ->
-    move;
-random_action(X) when X >= 50->
-    zoom.
 
 
 %% Move action are one of 4 :
@@ -209,11 +224,6 @@ zoom_move(Url, Size, Operation)->
 
 %% @doc Calculate the related tile number between two zoom level
 %%
-%%
-
-
-%%
-%% @todo recalculate
 %%
 coord_zoom(X, OldZoom, NewZoom) when OldZoom > NewZoom->    
     coord_zoom(round(X / 2), OldZoom-1, NewZoom);

@@ -42,27 +42,27 @@ fillall_test()->
     ?assertEqual([16,17,17,18,18,18],wmsosm:fillall(16,[])).
 
 get_square_size_test()->   
-    ?assertEqual(4, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"4">>]) )).
+    ?assertEqual([4,4], wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"4">>]) )).
 
 get_square_size_min_test()->   
-    ?assertEqual(1, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"0">>]) )).
+    ?assertEqual([1,1], wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"0">>]) )).
 
 get_square_size_max_test()->   
-    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"42">>]) )).
+    ?assertEqual([8,8], wmsosm:get_square_size(ts_dynvars:new([square_size], [<<"42">>]) )).
 
 get_square_size_list_test()->   
-    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], ["8"]) )).
+    ?assertEqual([8,8], wmsosm:get_square_size(ts_dynvars:new([square_size], ["8"]) )).
 
 get_square_size_int_test()->   
-    ?assertEqual(8, wmsosm:get_square_size(ts_dynvars:new([square_size], [8]) )).
+    ?assertEqual([8,8], wmsosm:get_square_size(ts_dynvars:new([square_size], [8]) )).
 
 read_ssize_exists_test()->
     %% The size is defined
-    ?assertEqual(8, wmsosm:read_ssize(ts_dynvars:new([square_size], [<<"8">>]))).
+    ?assertEqual(8, wmsosm:read_ssize(ts_dynvars:new([square_size], [<<"8">>]), width) ).
 
 read_ssize_notexists_test()->
     %% The size is defined
-    ?assertEqual(3, wmsosm:read_ssize(ts_dynvars:new([foobar], [<<"8">>]))).
+    ?assertEqual(3, wmsosm:read_ssize(ts_dynvars:new([foobar], [<<"8">>]), height ) ).
 
 get_urlblock_test()->
     %% The size is defined
@@ -72,7 +72,7 @@ get_urlblock_test()->
 get_urlblock_empty_test()->
     %% The size is not defined
     Urls = wmsosm:get_urlblock({42,ts_dynvars:new()}),
-    ?assertEqual(9, length(Urls)).
+    ?assertEqual(12, length(Urls)).
 
 zxy_test()->
     ?assertEqual(3, length(wmsosm:zxy())).
@@ -112,12 +112,12 @@ list_to_number_int2_test()->
 
 %% up to one zoom level
 zoom_move_more_test()->
-    ?assertEqual(["13/24/18"], wmsosm:zoom_move("12/12/9", 1, more)).
+    ?assertEqual(["13/24/18"], wmsosm:zoom_move("12/12/9", [1,1], more)).
 
 %% stay on the same zoom level, limit max reached
 
 zoom_move_less_test()->
-    ?assertEqual(["11/13/15"], wmsosm:zoom_move("12/26/30", 1, less)).
+    ?assertEqual(["11/13/15"], wmsosm:zoom_move("12/26/30", [1,1], less)).
 
 new_zoom_more_test()->
     ?assertEqual(4, wmsosm:new_zoom(3, more)).
@@ -134,15 +134,15 @@ last_block_defined_test()->
     ?assertEqual(["8/9/10"], wmsosm:last_block(ts_dynvars:new([list_url], [["8/9/10"]]) )).
 
 last_block_undefined_test()->
-    ?assertEqual(9, length(wmsosm:last_block(ts_dynvars:new() ))).
+    ?assertEqual(12, length(wmsosm:last_block(ts_dynvars:new() ))).
 %%
 %%
 %%
 move_first_test()->
-    ?assertEqual(9, length(wmsosm:move_first({4, ts_dynvars:new()} ) )).
+    ?assertEqual(12, length(wmsosm:move_first({4, ts_dynvars:new()} ) )).
 
 move_first_defined_test()->
-    Assert = ["2/1/1","2/1/2","2/1/3","2/2/1","2/2/2","2/2/3","2/3/1", "2/3/2","2/3/3"],
+    Assert = ["2/1/1","2/1/2","2/1/3","2/2/1","2/2/2","2/2/3","2/3/1","2/3/2","2/3/3","2/4/1","2/4/2","2/4/3"],
     ?assertEqual(Assert, wmsosm:move_first({4, ts_dynvars:new([first_url],["2/1/1"])} )).
 %%
 %%
