@@ -28,7 +28,8 @@
 %%% @doc List of dynvars used:
 %%%  - list_url
 %%%  - first_url
-%%%  - square_size
+%%%  - map_height (in pixel)
+%%%  - map_width (in pixel)
 %%%
 -module(wmsosm).
 -export([urlzxy/1,get_urlblock/1]).
@@ -40,13 +41,11 @@
 -define(ZOOM_LEVEL_MIN, 1).
 -define(ZOOM_LEVEL_MAX, 18).
 
--define(SQUARE_SIZE, 3).
--define(TILE_SIZE, 256).
 -define(TILE_WIDTH, 256).
 -define(TILE_HEIGHT, 256).
 
--define(MAP_WIDTH, 1024).
--define(MAP_HEIGHT, 768).
+-define(MAP_WIDTH, 600).
+-define(MAP_HEIGHT, 400).
 
 urlzxy({_Pid, _DynVars})->
     {N1,N2,N3} = now(),
@@ -57,20 +56,17 @@ urlzxy({_Pid, _DynVars})->
     Zoomlevel = array:get(Key, array:from_list(Arr)),
     string:concat(zoomlevel(Zoomlevel), coord(Zoomlevel)).
 
-%%% The square size is defined in dynvars or retrun default value
+%%% The sizes are defined in dynvars or return default value
 read_ssize(DynVars, height)->
-    case ts_dynvars:lookup(square_size,DynVars) of
+    case ts_dynvars:lookup(map_height,DynVars) of
 	{ok,Size} -> binary_to_number(Size);
-	false -> round(?MAP_HEIGHT/?TILE_HEIGHT)
+	false -> trunc(?MAP_HEIGHT/?TILE_HEIGHT) + 1
     end;
 read_ssize(DynVars, width)->
-    case ts_dynvars:lookup(square_size,DynVars) of
+    case ts_dynvars:lookup(map_width,DynVars) of
 	{ok,Size} -> binary_to_number(Size);
-	false -> round(?MAP_WIDTH/?TILE_WIDTH)
+	false -> trunc(?MAP_WIDTH/?TILE_WIDTH) + 1
     end.
-
-
-
 
 %% The first move
 %%
@@ -90,7 +86,7 @@ move_first({_Pid, DynVars})->
 %%
 move_next({_, DynVars})->
     Sq=get_square_size(DynVars),
-    [TopLeft|_] = last_block(DynVars),
+    TopLeft = url_corner(last_block(DynVars), top_left),
     case random_action(random:uniform(60)) of
 	move -> move(TopLeft, Sq, 1, random_move());
 	zoom -> zoom_move(TopLeft, Sq, random_zoom())
@@ -133,7 +129,7 @@ get_square_size(DynVars)->
     [max(Min,min(read_ssize(DynVars, width), Max)),
      max(Min,min(read_ssize(DynVars, height), Max))].
 
-%% Get an array of url from the top left
+%% Get an array of url from the bottom left corner
 %%
 %%
 %%
@@ -180,6 +176,9 @@ randxy(N)->
     random:seed(N1,N2,N3),
     random:uniform(trunc(math:pow(2, N)))-1.
 
+%% @doc Random move, choose a move randomly between 4 action
+%%
+%%
 random_move()->
     case random:uniform(4) of
 	1 -> left;
@@ -187,7 +186,6 @@ random_move()->
 	3 -> right;
 	4 -> top
     end.
-
 %%
 %%
 %% @spec random_zoom( integer() ) -> integer()
@@ -203,17 +201,21 @@ random_zoom()->
 %% Move action are one of 4 :
 %%
 move(Url, Size, Value, left)->
+    [_,H] = Size,
     [Z, X, Y] = url_split(Url),
-    get_urlfrom(Size, [Z, X - Value, Y]);
+    get_urlfrom([1,H], [Z, max(0, X - Value), Y]);
 move(Url, Size, Value, bottom)->
+    [W,_] = Size,
     [Z, X, Y] = url_split(Url),
-    get_urlfrom(Size, [Z, X, Y + Value]);
+    get_urlfrom([W,1], [Z, X, Y + Value]);
 move(Url, Size, Value, right)->
+    [_,H] = Size,
     [Z, X, Y] = url_split(Url),
-    get_urlfrom(Size, [Z, X + Value, Y]);
+    get_urlfrom([1,H], [Z, X + Value, Y]);
 move(Url, Size, Value, top)->
+    [W,_] = Size,
     [Z, X, Y] = url_split(Url),
-    get_urlfrom(Size, [Z, X, max(0, Y - Value)]).
+    get_urlfrom([W,1], [Z, X, max(0,Y - Value)]).
 
 zoom_move(Url, Size, Operation)->
     [Z, X, Y] = url_split(Url),
@@ -244,6 +246,14 @@ new_zoom(Z, less) when Z == ?ZOOM_LEVEL_MIN ->
 new_zoom(Z, less) ->
     Z - 1.
 
+%%
+%%
+%%
+url_corner(Urls, top_left)->
+    [TopLeft|_] = Urls,
+    TopLeft;
+url_corner(Urls, bottom_right)->
+    lists:nth(length(Urls), Urls).
 
 %% BBOX is a binary
 url_split(Url)->

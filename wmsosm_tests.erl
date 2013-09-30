@@ -1,4 +1,4 @@
-%%% -*- coding: utf-8 -*-  pylint: disable-msg=R0801
+%%% -*- coding: utf-8 -*-
 %%%
 %%% Copyright (c) 2013 Rodolphe Quiédeville <rodolphe@quiedeville.org>
 %%%
@@ -58,7 +58,16 @@ get_square_size_int_test()->
 
 read_ssize_exists_test()->
     %% The size is defined
-    ?assertEqual(8, wmsosm:read_ssize(ts_dynvars:new([square_size], [<<"8">>]), width) ).
+    ?assertEqual(8, wmsosm:read_ssize(ts_dynvars:new([map_width], [<<"8">>]), width) ).
+
+read_ssize_w_exists_test()->
+    %% The size is defined
+    ?assertEqual(3, wmsosm:read_ssize(ts_dynvars:new(), width) ).
+
+read_ssize_h_exists_test()->
+    %% The size is defined
+    ?assertEqual(3, wmsosm:read_ssize(ts_dynvars:new(), height) ).
+
 
 read_ssize_notexists_test()->
     %% The size is defined
@@ -81,7 +90,7 @@ url_split_test()->
     ?assertEqual([12, 1242, 3345], wmsosm:url_split("12/1242/3345")).
 
 move_next_test()->
-    ?assertEqual(4, 
+    ?assertEqual(2, 
 		 length(wmsosm:move_next({4,ts_dynvars:new([square_size,list_url],
 								  [2,["14/9/7"]
 								  ])
@@ -136,12 +145,14 @@ last_block_defined_test()->
 last_block_undefined_test()->
     ?assertEqual(12, length(wmsosm:last_block(ts_dynvars:new() ))).
 %%
+%% First move
 %%
-%%
-move_first_test()->
+move_first_undefined_test()->
+    %% the startpoint is undefined
     ?assertEqual(12, length(wmsosm:move_first({4, ts_dynvars:new()} ) )).
 
 move_first_defined_test()->
+    %% the startpoint is defined
     Assert = ["2/1/1","2/1/2","2/1/3","2/2/1","2/2/2","2/2/3","2/3/1","2/3/2","2/3/3","2/4/1","2/4/2","2/4/3"],
     ?assertEqual(Assert, wmsosm:move_first({4, ts_dynvars:new([first_url],["2/1/1"])} )).
 %%
@@ -156,3 +167,45 @@ coord_zoom_2up_test()->
 coord_zoom_1down_test()->
     ?assertEqual(130, wmsosm:coord_zoom(259, 9, 8 )).
 
+%%
+%%
+%%
+url_corner_tl_test()->
+    Assert = ["2/1/1","2/1/2","2/1/3","2/2/1","2/2/2","2/2/3","2/3/1","2/3/2","2/3/3","2/4/1","2/4/2","2/4/3"],
+    ?assertEqual("2/1/1", wmsosm:url_corner(Assert, top_left)).
+
+url_corner_br_test()->
+    Assert = ["2/1/1","2/1/2","2/1/3","2/2/1","2/2/2","2/2/3","2/3/1","2/3/2","2/3/3","2/4/1","2/4/2","2/4/3"],
+    ?assertEqual("2/4/3", wmsosm:url_corner(Assert, bottom_right)).
+%%
+%%
+move_left_test()->
+    %% Move 1 time to the left
+    Assert = ["2/0/1","2/0/2","2/0/3","2/0/4"],
+    ?assertEqual(Assert, wmsosm:move("2/1/1",[4,4], 1, left)).
+
+move_right_test()->
+    %% Move 1 time to the right, add 1 to X
+    Assert = ["2/2/1","2/2/2","2/2/3","2/2/4"],
+    ?assertEqual(Assert, wmsosm:move("2/1/1",[4,4], 1, right)).
+
+move_bottom_test()->
+    %% Move 1 time to the bottom, add 1 to Y
+    Assert = ["4/5/5","4/6/5","4/7/5"],
+    ?assertEqual(Assert, wmsosm:move("4/5/4",[3,6], 1, bottom)).
+
+move_top_test()->
+    %% Move 1 time to the top, sub 1 from Y
+    Assert = ["6/1/0","6/2/0","6/3/0","6/4/0","6/5/0"],
+    ?assertEqual(Assert, wmsosm:move("6/1/1",[5,4], 1, top)).
+
+move_top2_test()->
+    %% Move 2 time to the top, sub 2 from Y
+    Assert = ["6/1/6","6/2/6","6/3/6","6/4/6","6/5/6"],
+    ?assertEqual(Assert, wmsosm:move("6/1/8",[5,4], 2, top)).
+
+move_top3_test()->
+    %% Move 12 time to the top, sub 12 from Y
+    %% move is over limit
+    Assert = ["6/1/0","6/2/0","6/3/0","6/4/0","6/5/0"],
+    ?assertEqual(Assert, wmsosm:move("6/1/8",[5,4], 12, top)).
