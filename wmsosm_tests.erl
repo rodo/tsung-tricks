@@ -80,12 +80,12 @@ read_ssize_notexists_test()->
 
 get_urlblock_test()->
     %% The size is defined
-    Urls = wmsosm:get_urlblock({42,ts_dynvars:new([map_height], [<<"800">>])}),
+    Urls = wmsosm:get_urlblock({42, ts_dynvars:new([map_height], [<<"800">>])}),
     ?assertEqual(16, length(Urls)).
 
 get_urlblock_empty_test()->
     %% The size is not defined
-    Urls = wmsosm:get_urlblock({42,ts_dynvars:new()}),
+    Urls = wmsosm:get_urlblock({42, ts_dynvars:new()}),
     ?assertEqual(12, length(Urls)).
 
 zxy_test()->
@@ -101,7 +101,7 @@ random_action2_test()->
     ?assertEqual(zoom,  wmsosm:random_action(53)).
 
 random_move1_test()->
-    Actions = [{top, 1}, {bottom,2}, {left,3}, {right,4}],
+    Actions = [{top, 1}, {bottom, 2}, {left, 3}, {right, 4}],
     ?assertNot(false =:= lists:keyfind(wmsosm:random_move(), 1, Actions)).
 
 binary_to_number_test()->

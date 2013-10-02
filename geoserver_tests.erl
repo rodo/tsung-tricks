@@ -40,13 +40,13 @@ buildurl_test() ->
 
 %% urlwms/1
 urlwms_test()->
-    Assert="FORMAT=image%2Fpng&STYLES=&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&TILED=true&WIDTH=256&HEIGHT=256&TRANSPARENT=true&SRS=EPSG%3A900913&LAYERS=&TILESORIGIN=&BBOX=",
-    ?assertEqual(Assert,geoserver:urlwms({2,ts_dynvars:new([foo], [<<"42">>])})).
+    Assert = "FORMAT=image%2Fpng&STYLES=&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&TILED=true&WIDTH=256&HEIGHT=256&TRANSPARENT=true&SRS=EPSG%3A900913&LAYERS=&TILESORIGIN=&BBOX=",
+    ?assertEqual(Assert, geoserver:urlwms({2, ts_dynvars:new([foo], [<<"42">>])})).
 
 %% urlwms/1
 urlwms2_test()->
-    Assert="FORMAT=image%2Fpng&STYLES=&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&TILED=true&WIDTH=42&HEIGHT=256&TRANSPARENT=true&SRS=EPSG%3A900913&LAYERS=&TILESORIGIN=&BBOX=",
-    ?assertEqual(Assert,geoserver:urlwms({2,ts_dynvars:new([width], [<<"42">>])})).
+    Assert = "FORMAT=image%2Fpng&STYLES=&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&TILED=true&WIDTH=42&HEIGHT=256&TRANSPARENT=true&SRS=EPSG%3A900913&LAYERS=&TILESORIGIN=&BBOX=",
+    ?assertEqual(Assert, geoserver:urlwms({2, ts_dynvars:new([width], [<<"42">>])})).
 
 %% proj4erl
 proj_test()->
