@@ -28,8 +28,7 @@ fillurls(List) ->
 
 fillurls(Urls,[])->
     Urls;
-fillurls(Urls,List)->
-    [H|T]=List,
+fillurls(Urls,[H|T])->
     lists:merge([url(H)], fillurls(Urls,T)).
 
 url(Elmt) ->
