@@ -12,16 +12,16 @@
 
 -define(LIMIT, 10).
 
-get_date({_Pid,_Dynvars})-> 
+get_date({_Pid,_Dynvars})->
     fdate(rdate()).
 
 fdate({Year,Month,Day})->
     list_to_binary(io_lib:format("~w%2F~w%2F~w", [Month,Day,Year])).
 
 rdate()->
-    calendar:gregorian_days_to_date(calendar:date_to_gregorian_days(date())+delta()).
+    calendar:gregorian_days_to_date(calendar:date_to_gregorian_days(date()) + delta()).
 
 delta()->
     {N1,N2,N3} = now(),
     random:seed(N1,N2,N3),
-    ?LIMIT-random:uniform(?LIMIT*2).
+    ?LIMIT-random:uniform(?LIMIT * 2).
