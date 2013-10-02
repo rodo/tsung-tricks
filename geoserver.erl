@@ -69,10 +69,10 @@ urlwms({_Pid, DynVars})->
                                     width, height, transparent,
                                     srs, layers, tilesorigin, bbox]), right, $&).
 
-buildurl(DynVars, [H|T])->
-    options(H, DynVars)++"&"++buildurl(DynVars,T);
 buildurl(_, []) ->
-    "".
+    "";
+buildurl(DynVars, [H|T])->
+    options(H, DynVars)++"&"++buildurl(DynVars,T).
 
 %% The option value is defined in DynVars, return the dynvars
 %%                                else, return the default value
