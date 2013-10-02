@@ -1,7 +1,7 @@
 %%
 %% Unit tests for jsonurls modules
 %%
-%% 
+%%
 -module(htmlconv_tests).
 -include_lib("eunit/include/eunit.hrl").
 -author({author, "Rodolphe Quiedeville", "<rodolphe@quiedeville.org>"}).
