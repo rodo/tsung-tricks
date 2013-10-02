@@ -25,6 +25,5 @@ handle(Conn) ->
 response(Str) ->
     B = iolist_to_binary(Str),
     iolist_to_binary(
-      io_lib:fwrite(
-        "HTTP/1.0 200 OK\nContent-Type: text/html\nContent-Length: ~p\n\n~s",
-        [size(B), B])).
+      io_lib:fwrite("HTTP/1.0 200 OK\nContent-Type: text/html\nContent-Length: ~p\n\n~s",
+                    [size(B), B])).

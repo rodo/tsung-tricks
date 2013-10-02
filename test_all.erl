@@ -10,5 +10,4 @@ all_test_() -> [geoserver_tests,
                 percentile_tests,
                 randomdate_tests,
                 slippymap_tests,
-                wmsosm_tests
-               ].
+                wmsosm_tests].

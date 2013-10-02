@@ -20,6 +20,6 @@
 -module('samplemod').
 -export([foo/1]).
 
-foo({_Pid,DynVars})->
-    {ok,Rand}=ts_dynvars:lookup(bar1,DynVars),
+foo({_Pid, DynVars})->
+    {ok, Rand}=ts_dynvars:lookup(bar1,DynVars),
     "random=" ++ binary_to_list(Rand).
