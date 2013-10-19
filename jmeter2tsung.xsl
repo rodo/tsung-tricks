@@ -8,7 +8,7 @@
       indent="yes" />
 
   <xsl:template match="//jmeterTestPlan">
-    <session name="{@testname}" weight="1" type="ts_http">
+    <session name="{./hashTree/TestPlan/@testname}" weight="1" type="ts_http">
       <xsl:for-each select="hashTree/hashTree/hashTree/hashTree/HTTPSamplerProxy">
         <request>
           <http
