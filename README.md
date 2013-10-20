@@ -27,6 +27,9 @@ Tools
 
 * tsung.el : some functions to use with emacs
 
+* jmeter2tsung.xsl : xsl sheet to transform a jmeter's scenario in
+  .jmx format to a tsung .xml file
+
 See also
 ========
 
