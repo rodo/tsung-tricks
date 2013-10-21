@@ -6,21 +6,25 @@
       doctype-public="-//W3C//DTD HTML 4.01//EN"
       doctype-system="http://www.w3.org/TR/html4/strict.dtd"
       indent="yes" />
+  <xsl:strip-space elements="hashTree"/>
 
   <xsl:template match="//jmeterTestPlan">
     <session name="{./hashTree/TestPlan/@testname}" weight="1" type="ts_http">
-      <xsl:for-each select="hashTree/hashTree/hashTree/hashTree/HTTPSamplerProxy">
-        <request>
-          <http
-              url="{./stringProp[@name='HTTPSampler.path']/.}"
-              method="{./stringProp[@name='HTTPSampler.method']/.}">
-          </http>
-        </request>
-      </xsl:for-each>
+      <xsl:apply-templates select="hashTree"/>
     </session>
+  </xsl:template>
+
+  <xsl:template match="hashTree">
     <xsl:apply-templates />
   </xsl:template>
 
+  <xsl:template match="HTTPSamplerProxy">
+    <request>
+      <http
+          url="{./stringProp[@name='HTTPSampler.path']/.}"
+          method="{./stringProp[@name='HTTPSampler.method']/.}">
+      </http>
+    </request>
+  </xsl:template>
   <xsl:template match="*"/>
-
 </xsl:stylesheet>
