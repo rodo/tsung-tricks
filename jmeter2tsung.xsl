@@ -21,18 +21,30 @@
   <xsl:template match="HTTPSamplerProxy">
     <request>
       <xsl:choose>
-      <xsl:when test="./stringProp[@name='HTTPSampler.domain']/. != ''">
-        <http
-            url="{./stringProp[@name='HTTPSampler.protocol']/.}://{./stringProp[@name='HTTPSampler.domain']/.}{./stringProp[@name='HTTPSampler.path']/.}"
-            method="{./stringProp[@name='HTTPSampler.method']/.}">
-        </http>
-      </xsl:when>
-      <xsl:otherwise>
-        <http
-            url="{./stringProp[@name='HTTPSampler.path']/.}"
-            method="{./stringProp[@name='HTTPSampler.method']/.}">
-        </http>
-      </xsl:otherwise>
+        <xsl:when test="./stringProp[@name='HTTPSampler.domain']/. != ''">
+
+          <xsl:choose>
+            <xsl:when test="./stringProp[@name='HTTPSampler.port']/. != ''">
+              <http
+                  url="{./stringProp[@name='HTTPSampler.protocol']/.}://{./stringProp[@name='HTTPSampler.domain']/.}:{./stringProp[@name='HTTPSampler.port']/.}{./stringProp[@name='HTTPSampler.path']/.}"
+                  method="{./stringProp[@name='HTTPSampler.method']/.}">
+              </http>
+            </xsl:when>
+            <xsl:otherwise>
+              <http
+                  url="{./stringProp[@name='HTTPSampler.protocol']/.}://{./stringProp[@name='HTTPSampler.domain']/.}{./stringProp[@name='HTTPSampler.path']/.}"
+                  method="{./stringProp[@name='HTTPSampler.method']/.}">
+              </http>
+            </xsl:otherwise>
+          </xsl:choose>
+
+        </xsl:when>
+        <xsl:otherwise>
+          <http
+              url="{./stringProp[@name='HTTPSampler.path']/.}"
+              method="{./stringProp[@name='HTTPSampler.method']/.}">
+          </http>
+        </xsl:otherwise>
       </xsl:choose>
     </request>
   </xsl:template>
