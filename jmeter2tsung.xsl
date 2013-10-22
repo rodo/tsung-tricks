@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+Author : Rodolphe Quiédeville <rodolphe@quiedeville.org>
+Src : https://github.com/rodo/tsung-tricks/
+Licence : GPLv3
+-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output
       method="xml"
       encoding="UTF-8"
-      doctype-public="-//W3C//DTD HTML 4.01//EN"
-      doctype-system="http://www.w3.org/TR/html4/strict.dtd"
+      doctype-system="/usr/share/tsung/tsung-1.0.dtd"
       indent="yes" />
   <xsl:strip-space elements="hashTree"/>
+
+<!-- <!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd"> -->
 
   <xsl:template match="//jmeterTestPlan">
     <session name="{./hashTree/TestPlan/@testname}" weight="1" type="ts_http">
@@ -18,11 +24,18 @@
     <xsl:apply-templates />
   </xsl:template>
 
+  <xsl:template match="TransactionController">
+    <transaction name="{@testname}">
+      <xsl:for-each select="following::hashTree">
+          <xsl:apply-templates />
+      </xsl:for-each>
+    </transaction>
+  </xsl:template>
+
   <xsl:template match="HTTPSamplerProxy">
     <request>
       <xsl:choose>
         <xsl:when test="./stringProp[@name='HTTPSampler.domain']/. != ''">
-
           <xsl:choose>
             <xsl:when test="./stringProp[@name='HTTPSampler.port']/. != ''">
               <http
@@ -37,7 +50,6 @@
               </http>
             </xsl:otherwise>
           </xsl:choose>
-
         </xsl:when>
         <xsl:otherwise>
           <http
@@ -48,7 +60,5 @@
       </xsl:choose>
     </request>
   </xsl:template>
-
-
   <xsl:template match="*"/>
 </xsl:stylesheet>
