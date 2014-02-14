@@ -1,3 +1,4 @@
+%% -*- coding: utf-8 -*-
 %%
 %% Copyright (c) 2013 Rodolphe Quiédeville <rodolphe@quiedeville.org>
 %%
@@ -14,35 +15,23 @@
 %%     You should have received a copy of the GNU General Public License
 %%     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%
-%% Return a tuple Lat,Lon in range
+%% Decode html entities
 %%
--module(wms_randomcoord).
--export([rcoord/0,rcoord/2,rcoord/4]).
--export([url/1]).
+%%
+-module(htmlconv).
+-export([html_to_uri/1]).
+-export([decode_entities/1]).
 
-url({_Pid,_DynVars})->
-    {Lat,Lon} = rcoord(),
-    "lat=" ++ lists:flatten(io_lib:format("~.6f",[Lat])) ++ "&lon=" ++ lists:flatten(io_lib:format("~.6f",[Lon])).
+html_to_uri(Text)->
+        http_uri:encode(repl(Text, [])).
 
-rcoord()->
-    rcoord(-90.0,90.0,-180.0,180.0).
+decode_entities(Text)->
+    repl(Text, []).
 
-rcoord(Bottom,Top,Left,Right)->
-    Lon=longitude(float(Left),float(Right)),
-    Lat=latitude(float(Bottom),float(Top)),
-    {Lat,Lon}.
-
-rcoord(Min,Max)->
-    {N1,N2,N3} = now(),
-    random:seed(N1,N2,N3),
-    Val=random:uniform() + Min + random:uniform(round(Max - Min)),
-    max(Min,min(Val,Max)).
-
-longitude(Left,Right)->
-    X = rcoord(Left,Right),
-    min(180.0,X).
-
-latitude(Min,Max)->
-    X = rcoord(Min,Max),
-    min(90.0,X).
-
+repl([],Acc) -> lists:reverse(Acc);
+repl([$&,$a,$m,$p,$;|T],Acc) -> repl(T,[$&|Acc]);
+repl([$&,$l,$t,$;|T],Acc) -> repl(T,[$<|Acc]);
+repl([$&,$g,$t,$;|T],Acc) -> repl(T,[$>|Acc]);
+repl([$&,$q,$u,$o,$t,$;|T],Acc) -> repl(T,[$"|Acc]);
+repl([$&,$a,$p,$o,$s,$;|T],Acc) -> repl(T,[$'|Acc]);
+repl([H|T],Acc) -> repl(T,[H|Acc]).

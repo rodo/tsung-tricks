@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
+<!--
+
+Author :  Rodolphe Quiedeville
+Context : Tile server used in OpenStreetMap
+
+Perform a bench on tile server
+
+-->
+<tsung loglevel="debug" dumptraffic="protocol" version="1.0">
+
+  <!-- Client side setup -->
+  <clients>
+    <client host="localhost" weight="2" maxusers="40" />
+  </clients>
+
+  <!-- Server side setup -->
+  <servers>
+    <server host="localhost" port="80" type="tcp"/>
+  </servers>
+
+  <load>
+    <arrivalphase phase="1" duration="20" unit="second">
+      <users interarrival="1" unit="second" maxnumber="1"></users>
+    </arrivalphase>
+  </load>
+
+  <options>
+    <option type="ts_http" name="user_agent">
+      <user_agent probability="100">tsung 1.4.2</user_agent>
+    </option>
+  </options>
+
+ <sessions>
+
+   <session name='desktop' weight='9'  type='ts_http'>
+     <!-- set the square size depends off the application -->
+     <setdynvars sourcetype="value" value="2">
+       <var name="square_size" />
+     </setdynvars>
+
+     <!-- First action -->
+     <setdynvars sourcetype="erlang" callback="wmsosm:get_urlblock">
+       <var name="list_url" />
+     </setdynvars>
+
+     <foreach name="element" in="list_url">
+       <request subst="true">
+	 <http url="/%%_element%%.png" method="GET" version="1.1"/>
+       </request>
+     </foreach>
+
+     <!-- randomly define how many action a user will do -->
+     <setdynvars sourcetype="random_number" start="12" end="14">
+       <var name="actions" />
+     </setdynvars>
+
+     <!-- loop over actions -->
+     <for from="1" to="%%_actions%%" incr="1" var="loop">
+       <setdynvars sourcetype="erlang" callback="wmsosm:move_next">
+	 <var name="list_url" />
+       </setdynvars>
+       
+       <foreach name="element" in="list_url">
+	 <request subst="true">
+	   <http url="/%%_element%%.png?next=&amp;loop=%%_loop%%" method="GET" version="1.1"/>
+	 </request>
+       </foreach>
+     </for>
+   </session>
+
+ </sessions>
+</tsung>
