@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/usr/share/tsung/tsung-1.0.dtd">
+<!--
+
+Author :  Rodolphe Quiedeville
+
+Perform a bench on GIS server, make requests on  random coordinates
+
+-->
+<tsung loglevel="critical" dumptraffic="false" version="1.0">
+
+  <!-- Client side setup -->
+  <clients>
+    <client host="localhost" weight="2" maxusers="40" />
+  </clients>
+
+  <!-- Server side setup -->
+  <servers>
+    <server host="osm.fsffrance.org" port="80" type="tcp"/>
+  </servers>
+
+  <load>
+    <arrivalphase phase="1" duration="20" unit="minute">
+      <users arrivalrate="1" unit="second"></users>
+    </arrivalphase>
+    <arrivalphase phase="2" duration="20" unit="minute">
+      <users arrivalrate="2" unit="second"></users>
+    </arrivalphase>
+    <arrivalphase phase="3" duration="20" unit="minute">
+      <users interarrival="3" unit="second"></users>
+    </arrivalphase>
+    <arrivalphase phase="4" duration="20" unit="minute" >
+      <users arrivalrate="4" unit="second"></users>
+    </arrivalphase>
+    <arrivalphase phase="5" duration="20" unit="minute" >
+      <users arrivalrate="5" unit="second"></users>
+    </arrivalphase>
+  </load>
+
+  <options>
+    <option type="ts_http" name="user_agent">
+      <user_agent probability="100">tsung 1.4.2</user_agent>
+    </option>
+  </options>
+
+ <sessions>
+
+   <session name='zoom12' probability='50'  type='ts_http'>
+
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="width"/>
+       </setdynvars>
+       
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="height"/>
+       </setdynvars>
+
+       <request subst="true">
+	 <http url="http://osm.fsffrance.org/wms?LAYERS=World%3Alines&amp;STYLES=&amp;FORMAT=image%2Fpng&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetMap&amp;EXCEPTIONS=application%2Fvnd.ogc.se_inimage&amp;SRS=EPSG%3A900913&amp;BBOX=608635.9295508,6692207.2837891,1438126.89,7310165.6337891&amp;WIDTH=%%_width%%&amp;HEIGHT=%%_height%%" method="GET" version="1.1"/>
+       </request>
+
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="width"/>
+       </setdynvars>
+       
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="height"/>
+       </setdynvars>
+       
+       <request subst="true">
+	 <http url="http://osm.fsffrance.org/wms?LAYERS=World%3Alines&amp;STYLES=&amp;FORMAT=image%2Fpng&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetMap&amp;EXCEPTIONS=application%2Fvnd.ogc.se_inimage&amp;SRS=EPSG%3A900913&amp;BBOX=608615.9295508,6692207.2837891,1438126.89,7210165.6337891&amp;WIDTH=%%_width%%&amp;HEIGHT=%%_height%%" method="GET" version="1.1"/>
+       </request>             
+     
+   </session>
+
+   <session name='zoom12' probability='25'  type='ts_http'>
+
+     <for from="1" to="10" incr="1" var="counter">
+
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="width"/>
+       </setdynvars>
+       
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="height"/>
+       </setdynvars>
+
+       <request subst="true">
+	 <http url="http://osm.fsffrance.org/wms?LAYERS=World%3Alines&amp;STYLES=&amp;FORMAT=image%2Fpng&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetMap&amp;EXCEPTIONS=application%2Fvnd.ogc.se_inimage&amp;SRS=EPSG%3A900913&amp;BBOX=608635.9295508,6692207.2837891,1438126.89,7310165.6337891&amp;WIDTH=%%_width%%&amp;HEIGHT=%%_height%%" method="GET" version="1.1"/>
+       </request>
+
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="width"/>
+       </setdynvars>
+       
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="height"/>
+       </setdynvars>
+       
+       <request subst="true">
+	 <http url="http://osm.fsffrance.org/wms?LAYERS=World%3Alines&amp;STYLES=&amp;FORMAT=image%2Fpng&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetMap&amp;EXCEPTIONS=application%2Fvnd.ogc.se_inimage&amp;SRS=EPSG%3A900913&amp;BBOX=608615.9295508,6692207.2837891,1438126.89,7210165.6337891&amp;WIDTH=%%_width%%&amp;HEIGHT=%%_height%%" method="GET" version="1.1"/>
+       </request>             
+     </for>
+   </session>
+
+   <session name='zoom12' probability='25'  type='ts_http'>
+
+     <for from="1" to="2" incr="1" var="counter">
+
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="width"/>
+       </setdynvars>
+       
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="height"/>
+       </setdynvars>
+
+       <request subst="true">
+	 <http url="http://osm.fsffrance.org/wms?LAYERS=World%3Alines&amp;STYLES=&amp;FORMAT=image%2Fpng&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetMap&amp;EXCEPTIONS=application%2Fvnd.ogc.se_inimage&amp;SRS=EPSG%3A900913&amp;BBOX=608635.9295508,6692207.2837891,1438126.89,7310165.6337891&amp;WIDTH=%%_width%%&amp;HEIGHT=%%_height%%" method="GET" version="1.1"/>
+       </request>
+
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="width"/>
+       </setdynvars>
+       
+       <setdynvars sourcetype="random_number" start="20" end="600">
+	 <var name="height"/>
+       </setdynvars>
+       
+       <request subst="true">
+	 <http url="http://osm.fsffrance.org/wms?LAYERS=World%3Alines&amp;STYLES=&amp;FORMAT=image%2Fpng&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetMap&amp;EXCEPTIONS=application%2Fvnd.ogc.se_inimage&amp;SRS=EPSG%3A900913&amp;BBOX=608615.9295508,6692207.2837891,1438126.89,7210165.6337891&amp;WIDTH=%%_width%%&amp;HEIGHT=%%_height%%" method="GET" version="1.1"/>
+       </request>             
+     </for>
+   </session>
+
+   
+ </sessions>
+</tsung>
