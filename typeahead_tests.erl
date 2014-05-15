@@ -13,17 +13,17 @@
 %% tests
 typeahead_test() ->
     Result = typeahead:typeahead("belleville", 2, 4),
-    Attend = ["be", "bel", "bell"],
+    Attend = [<<"be">>, <<"bel">>, <<"bell">>],
     ?assertEqual(Result, Attend).
 
 typeahead_default_test() ->
     Result = typeahead:typeahead("belleville"),
-    Attend = ["bel", "bell", "belle", "bellev"],
+    Attend = [<<"bel">>, <<"bell">>, <<"belle">>, <<"bellev">>],
     ?assertEqual(Result, Attend).
 
 typeahead_default_small_test() ->
     Result = typeahead:typeahead("foo"),
-    Attend = ["foo"],
+    Attend = [<<"foo">>],
     ?assertEqual(Result, Attend).
 
 

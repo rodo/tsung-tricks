@@ -44,13 +44,13 @@ typeahead(List, Min, Max) ->
         1 -> [H|T] = List;
         _ -> [H,T] = splithead(List, Min, Max)
     end,
-    lists:merge([lists:flatten([H])],typeahead(T,H,[],2,Max)).
+    lists:merge([binary:list_to_bin(lists:flatten([H]))],typeahead(T,H,[],2,Max)).
 
 typeahead([H|T], B, Urls, Loop, Max) ->
     case Loop =< Max of
         true -> 
             lists:merge(typeahead(T, lists:flatten([B])++lists:flatten([H]), Urls, Loop + 1, Max), 
-                        [lists:flatten([B])++lists:flatten([H])]);
+                        [binary:list_to_bin(lists:flatten([B])++lists:flatten([H]))]);
                 
         false -> Urls
     end;
