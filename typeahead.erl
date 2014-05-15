@@ -1,13 +1,15 @@
 %%
-%% Read json data, extract urls from it and return a List
+%% Simulate a typeahead javascript
 %%
 %% DynVars used :
-%%  - jsonurls
+%%  - typeahead_min : integer
+%%  - typeahead_max : integer
+%%  - url : string (required)
 %%
-%% [ {"url": "/foobar/index?page=0"},
-%%   {"url": "/foobar/index?page=1"} ]
+%% url = "foobar"
+%% 
 %% will return an erlang List as :
-%% ["/foobar/index?page=0","/foobar/index?page=1"]
+%% ["foo", "foob", "foobar"]
 %%
 -module(typeahead).
 -include_lib("eunit/include/eunit.hrl").

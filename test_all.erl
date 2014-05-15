@@ -7,4 +7,5 @@
 all_test_() -> [jsonurls_tests,
                 htmlconv_tests,
                 percentile_tests,
+                typeahead_tests,
                 randomdate_tests].

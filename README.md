@@ -16,6 +16,8 @@ Modules
 
 * samplemod.erl : a sample module to show how to use ts_dynvars:lookup
 
+* typeahead.erl : simulate a javascript typeahead
+
 Tools
 =====
 

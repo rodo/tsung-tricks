@@ -7,11 +7,11 @@
 ERL=/usr/bin/erl
 ERLC=/usr/bin/erlc
 
-all: ebin/htmlconv.beam ebin/jsonurls.beam ebin/percentile.beam ebin/randomdate.beam
+all: ebin/htmlconv.beam ebin/jsonurls.beam ebin/percentile.beam ebin/randomdate.beam ebin/typeahead.beam
 
-dial: ebin-debug/htmlconv.dial ebin-debug/jsonurls.dial ebin-debug/percentile.dial ebin-debug/randomdate.dial 
+dial: ebin-debug/htmlconv.dial ebin-debug/jsonurls.dial ebin-debug/percentile.dial ebin-debug/randomdate.dial ebin-debug/typeahead.dial
 
-test: ebin-test/test_all.beam ebin-test/jsonurls.beam ebin-test/jsonurls_tests.beam ebin-test/htmlconv.beam ebin-test/htmlconv_tests.beam ebin-test/percentile.beam ebin-test/randomdate.beam ebin-test/percentile_tests.beam ebin-test/randomdate_tests.beam
+test: ebin-test/test_all.beam ebin-test/jsonurls.beam ebin-test/jsonurls_tests.beam ebin-test/htmlconv.beam ebin-test/htmlconv_tests.beam ebin-test/percentile.beam ebin-test/randomdate.beam ebin-test/percentile_tests.beam ebin-test/randomdate_tests.beam ebin-test/typeahead_tests.beam ebin-test/typeahead.beam
 
 dotest: test
 	$(ERL) -noshell -pa ./ebin-test -s eunit test test_all -s init stop
